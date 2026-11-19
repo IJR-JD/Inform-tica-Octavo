@@ -161,9 +161,11 @@ function spreadsheet(ex,index){
  }
  function closeEditor(){
   if(!editor)return;
-  const td=positions.get(selected);
-  if(td?.contains(editor))editor.remove();
+  // Clear ownership BEFORE detaching the focused input. Its blur handler
+  // must not re-enter removal while the original editor is being detached.
+  const input=editor;
   editor=null;
+  if(input.isConnected)input.remove();
   updateViews();
  }
  function commit(raw){
