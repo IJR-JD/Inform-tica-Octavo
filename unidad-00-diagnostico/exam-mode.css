@@ -95,3 +95,7 @@
 @media(max-width:620px){.exam-question-nav{grid-template-columns:repeat(8,1fr)}.exam-timer-shell{padding:12px;gap:10px}.exam-progress{max-width:140px}.exam-clock{font-size:1.65rem}.exam-question-card{padding:19px}.exam-option{padding:14px;min-height:58px}.exam-option:has(input:checked){padding:13px}.exam-action-bar{display:grid;grid-template-columns:1fr 1fr}.exam-action-bar button{padding:12px 5px;font-size:.94rem}.exam-review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.exam-domain-results{grid-template-columns:1fr}.exam-intro aside{padding:17px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
 @media print{.topbar,.exam-timer-shell,.exam-sidebar,.exam-result-actions{display:none!important}.exam-results{display:block!important}}
+
+/* Hide redundant controls during exam review and results. */
+.exam-action-bar[hidden]{display:none!important}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
