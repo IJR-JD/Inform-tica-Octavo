@@ -1,0 +1,112 @@
+name: Import Claude source package and deploy
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Tag of a release containing Inform-tica-Octavo-completo.zip'
+        required: true
+        type: string
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: claude-ti8-package
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Retrieve exact Claude package from release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.release_tag }}
+        run: |
+          mkdir -p /tmp/claude-package
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --pattern 'Inform-tica-Octavo-completo.zip' --dir /tmp/claude-package
+          test -s /tmp/claude-package/Inform-tica-Octavo-completo.zip
+      - name: Validate and extract original files safely
+        run: |
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          from stat import S_IFMT, S_IFLNK
+          p=Path("/tmp/claude-package/Inform-tica-Octavo-completo.zip")
+          dest=Path("/tmp/claude-package/content")
+          dest.mkdir(parents=True,exist_ok=True)
+          with ZipFile(p) as z:
+              members=[i for i in z.infolist() if not i.is_dir()]
+              assert 0 < len(members) <= 300, 'Unexpected file count'
+              assert sum(i.file_size for i in members) <= 100_000_000, 'Archive too large'
+              names={i.filename for i in members}
+              prefix="Inform-tica-Octavo-main/"
+              assert all(i.filename.startswith(prefix) and not i.filename.startswith(prefix+"../") for i in members)
+              required={"index.html","motion-figures.js","motion-figures.css",
+                        "hub-enhanced.css","unidad-01-excel/index.html",
+                        "unidad-01-excel/animated-figures.css"}
+              assert all(prefix+n in names for n in required), 'Missing Claude source files'
+              gifs=[i for i in members if i.filename.startswith(prefix+"assets/gifs/") and i.filename.endswith(".gif")]
+              assert len(gifs) >= 25, 'Original GIF assets missing'
+              for i in members:
+                  relative=Path(i.filename).relative_to(prefix)
+                  assert all(p not in ("..","") for p in relative.parts)
+                  assert not relative.is_absolute()
+                  assert S_IFMT(i.external_attr >> 16) != S_IFLNK
+                  target=dest/relative
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  target.write_bytes(z.read(i))
+              for i in gifs:
+                  assert z.read(i)[:6] in (b'GIF87a',b'GIF89a'), i.filename
+          print("Exact Claude package extracted:",len(members),"files,",len(gifs),"GIF assets")
+          PY
+      - name: Synchronize original package, not a reconstructed design
+        run: |
+          rsync -a --delete --exclude='.git/' \
+            --exclude='.github/workflows/import-claude-package.yml' \
+            /tmp/claude-package/content/ ./
+      - name: Validate scripts and relative asset references
+        run: |
+          node --check motion-figures.js
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          for html in (Path("index.html"),Path("unidad-01-excel/index.html")):
+              contents=html.read_text(encoding="utf-8")
+              for s in re.findall(r'<script[^>]*src=["\']([^"\']+)["\']',contents):
+                  assert not s.startswith(("http:","https:"))
+                  assert (html.parent/s.split("?")[0]).exists(), (html,s)
+              for asset in re.findall(r'(?:src|href)=["\']([^"\']+\.gif)["\']',contents):
+                  assert (html.parent/asset).exists(), (html,asset)
+          print("Source files and direct script/GIF references present")
+          PY
+      - name: Commit the exact Claude archive contents to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "feat: import exact Claude TI-8 source and all GIF assets"
+            git push origin HEAD:main
+          fi
+      - name: Upload published static files
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+  deploy:
+    needs: import
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    steps:
+      - name: Deploy exact Claude site
+        id: publish
+        uses: actions/deploy-pages@v4
