@@ -1,0 +1,95 @@
+/* Unit 01 · Learning journey design refinement. The original IJR monochrome
+   design system is retained; the 7 numbered circles are replaced by named stages. */
+html{scroll-behavior:smooth}
+.guided-shell{max-width:1500px!important;padding:30px clamp(16px,3vw,44px) 90px!important}
+.course-hero{border:1px solid #202020;padding:clamp(24px,3.5vw,44px);gap:38px}
+.course-hero h1{max-width:860px;font-size:clamp(2.35rem,4vw,4.1rem)!important;line-height:1.07!important;letter-spacing:-.045em!important}
+.course-hero p{max-width:75ch;line-height:1.7}
+.course-hero .progress-panel strong{font-size:clamp(2.5rem,5vw,4.5rem)!important}
+.journey-top-nav{display:flex;gap:12px;align-items:center;margin:25px 0 24px;flex-wrap:wrap}
+.journey-top-label{padding:9px 13px;border:1px solid #111;background:#111;color:white;font-size:.76rem;letter-spacing:.08em;font-weight:750}
+.journey-top-sub{font-size:.86rem;color:#545454}
+.journey-module-header{padding:28px 0 20px;border-bottom:1px solid #d1d1d1;margin-bottom:22px}
+.journey-module-header .eyebrow{font-size:.75rem}
+.journey-module-header h2{font-size:clamp(1.8rem,3vw,2.8rem);letter-spacing:-.04em;line-height:1.15;margin:.35em 0}
+.journey-module-header p{max-width:78ch;line-height:1.7;color:#444;margin:0}
+.journey-layout{display:grid;grid-template-columns:minmax(230px,.34fr) minmax(0,1fr);gap:22px;align-items:start}
+.journey-sidebar{border:1px solid #d6d6d6;background:#fff;position:sticky;top:90px;padding:18px 0}
+.journey-sidebar-title{padding:4px 18px 16px;border-bottom:1px solid #eee;font-weight:800;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase}
+.journey-nav{display:grid}
+.journey-nav-item{appearance:none;width:100%;background:#fff;border:0;border-bottom:1px solid #f1f1f1;padding:15px 17px;display:grid;grid-template-columns:36px minmax(0,1fr) 28px;gap:10px;align-items:center;text-align:left;cursor:pointer;color:#1f1f1f}
+.journey-nav-item .journey-num{font-family:Consolas,monospace;font-size:.82rem;color:#777}
+.journey-nav-text{font-weight:700;font-size:.86rem;line-height:1.45}
+.journey-status{font-size:.74rem;color:#666;text-align:right}
+.journey-nav-item.is-current{background:#161616;color:#fff}
+.journey-nav-item.is-current .journey-num,.journey-nav-item.is-current .journey-status{color:#fff}
+.journey-nav-item.is-done{background:#f3f4f3}
+.journey-nav-item:disabled{opacity:.45;cursor:not-allowed}
+.journey-nav-item:not(:disabled):focus-visible{outline:3px solid #595959;outline-offset:-3px}
+.journey-stage{min-width:0;border:1px solid #d1d1d1;background:#fff;padding:clamp(18px,3vw,35px)}
+.journey-heading{margin-bottom:22px}
+.journey-overline,.ped-kicker{font-size:.72rem!important;letter-spacing:.13em!important;font-weight:800!important;color:#555!important}
+.journey-heading h2{font-size:clamp(1.8rem,3vw,2.7rem);letter-spacing:-.045em;line-height:1.12;margin:8px 0}
+.journey-lead{font-size:.96rem;max-width:82ch;color:#555;line-height:1.7}
+.journey-stage-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:25px}
+.journey-stage-pill{border:1px solid #ddd;padding:10px;font-size:.69rem;font-weight:750;line-height:1.4;color:#777;background:#fafafa;white-space:normal}
+.journey-stage-pill.is-current{background:#171717;color:#fff;border-color:#171717}
+.journey-stage-pill.is-past{color:#333;background:#eaeaea}
+.journey-intro-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(210px,.55fr);gap:18px}
+.journey-extract,.journey-context{min-width:0}
+.journey-context{padding:22px;background:#f7f7f7;border:1px solid #d9d9d9;align-self:start}
+.journey-context h3{font-size:1.2rem;margin:8px 0 14px}
+.journey-context p{line-height:1.75;font-size:.9rem}
+.journey-text-link{border:0;border-bottom:1px solid #151515;padding:4px 0;background:none;font-weight:750;cursor:pointer}
+.ped-deep-dive,.journey-stage .ped-intro,.journey-stage .ped-card{margin:0!important;display:block;border-radius:0}
+.journey-stage .ped-intro,.journey-stage .ped-card{border:1px solid #dedede;border-top:2px solid #202020;padding:clamp(17px,2.3vw,26px);margin-bottom:16px!important}
+.journey-stage .ped-intro{border-color:#222;border-top-width:3px}
+.journey-stage .ped-term{background:#f6f6f6;border-color:#dedede}
+.journey-stage .ped-term dt{color:#202020}
+.journey-stage .ped-copy{color:#323232}
+.journey-stage .ped-sheet td.ped-cell-focus{background:#e9e9e9;outline-color:#202020;color:#161616}
+.journey-stage .ped-calculation{background:#f6f6f6;border-left-color:#191919;color:#202020}
+.journey-stage .ped-list li::marker{color:#161616}
+.journey-stage .ped-transfer{background:#f6f6f6}
+.journey-action-row{display:flex;gap:20px;align-items:center;justify-content:space-between;border-top:1px solid #ddd;margin-top:22px;padding-top:20px}
+.journey-action-hint{color:#666;font-size:.78rem;max-width:45ch;line-height:1.5}
+.journey-next,.journey-check-button{background:#111;color:#fff;border:1px solid #111;padding:12px 20px;font-size:.9rem;font-weight:750;cursor:pointer;min-height:48px;text-align:center}
+.journey-next:disabled{background:#e8e8e8;border-color:#ddd;color:#888;cursor:not-allowed}
+.journey-next:not(:disabled):hover,.journey-check-button:hover{background:#333}
+.journey-next:focus-visible,.journey-check-button:focus-visible,.journey-expand:focus-visible{outline:3px solid #888;outline-offset:3px}
+.journey-video-panel{display:grid;gap:18px}
+.journey-video-block{border:1px solid #222;background:#0e0e0e}
+.journey-video-block video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;max-height:600px}
+.journey-video-tools{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;align-items:center;background:#fff;color:#222}
+.journey-watch-status{font-size:.82rem;font-weight:750}
+.journey-expand{border:1px solid #151515;background:#fff;color:#111;padding:9px 13px;cursor:pointer;font-weight:750}
+.journey-step-feedback{border-left:3px solid #111;padding:12px 18px;background:#f7f7f7;font-size:.9rem}
+.journey-stage .ped-list li[hidden]{display:none!important}
+.journey-stage .ped-list li.is-guided-active{background:#f3f3f3;padding:15px 18px;border-left:3px solid #111;margin-left:-17px}
+.journey-check{border:1px solid #1c1c1c;padding:24px;margin-top:15px}
+.journey-check h3{font-size:1.25rem;margin:.5em 0 1em;line-height:1.4}
+.journey-choices{display:grid;gap:11px}
+.journey-answer{border:1px solid #ccc;padding:14px;display:flex;align-items:start;gap:12px;font-size:.95rem;line-height:1.55;cursor:pointer}
+.journey-answer:has(input:checked){background:#eee;border-color:#191919}
+.journey-answer input{margin-top:5px;accent-color:#111}
+.journey-result{font-size:.85rem;line-height:1.6;color:#505050;margin:17px 0;padding:13px;background:#f6f6f6}
+.journey-result.is-ok{border-left:4px solid #222}
+.journey-result.is-error{border-left:4px solid #b45225}
+.journey-check .journey-next{display:block;margin-top:16px;width:100%}
+.journey-exercise-area{margin-top:20px}
+.journey-exercise-area[hidden],#theoryPhase[hidden],#practicePhase[hidden]{display:none!important}
+.journey-exercise-area .guided-layout{grid-template-columns:minmax(290px,.65fr) minmax(0,1.35fr);gap:20px;align-items:start}
+.journey-exercise-area .guided-card{min-width:0}
+.journey-exercise-area .guided-card h2{font-size:clamp(1.5rem,2.6vw,2rem)}
+.journey-practice-path{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin:22px 0}
+.journey-practice-path button{min-height:56px;width:100%;height:auto;border-radius:0;padding:12px;text-align:left;border:1px solid #ddd;background:#fff;color:#222;font-size:.8rem;font-weight:750}
+.journey-practice-path button.active{background:#111;border-color:#111;color:#fff}
+.journey-practice-path button.done{background:#efefef;color:#222}
+.journey-practice-path button:disabled{opacity:.38}
+.journey-practice-heading{border-top:3px solid #111;padding-top:24px;margin-top:35px}
+.journey-practice-heading h2{font-size:clamp(1.9rem,3vw,2.8rem);margin:8px 0}
+.journey-practice-heading p{color:#555;line-height:1.7;max-width:80ch}
+.journey-review-btn{margin:10px 0;padding:10px 14px;border:1px solid #111;background:white;font-weight:750;cursor:pointer}
+@media(max-width:1060px){.journey-layout{grid-template-columns:1fr}.journey-sidebar{position:static}.journey-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.journey-nav-item{border-right:1px solid #ddd}.journey-intro-grid{grid-template-columns:1fr}.journey-exercise-area .guided-layout{grid-template-columns:1fr}}
+@media(max-width:650px){.journey-nav{grid-template-columns:1fr}.journey-stage-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.journey-stage{padding:18px}.journey-action-row{display:grid;gap:12px}.journey-next{width:100%}.journey-video-tools{display:grid}.course-hero{padding:22px}.course-hero h1{font-size:2.25rem!important}.journey-practice-path{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
