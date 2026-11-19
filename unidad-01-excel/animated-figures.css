@@ -57,3 +57,25 @@ body{font-size:18px;line-height:1.7}
 @media(max-width:1050px){.guided-layout{grid-template-columns:1fr}}
 @media(max-width:700px){html{font-size:16px}.guided-shell{padding:18px 13px 60px}.guided-card{padding:19px}.figure-stage{padding:12px}.motion-stage{padding:8px}.motion-controls{gap:5px}.motion-controls button{padding:8px 10px}.motion-explanation{font-size:.98rem}.motion-stage .axis-label{font-size:18px}}
 @media(prefers-reduced-motion:reduce){.motion-stage *{animation:none!important;transition:none!important}.motion-stage .arrow.visible{stroke-dashoffset:0!important}}
+
+
+/* Immersive, classroom-scale figure presentation */
+.motion-controls .motion-expand{margin-left:auto;background:#111;color:white;border-color:#111;font-size:.88rem;padding:11px 17px}
+.motion-controls .motion-expand:hover{background:#343434}
+.motion-explanation{font-size:1.14rem;line-height:1.7;min-height:94px}
+.motion-stage svg{min-height:270px}
+.figure-dialog{position:fixed;inset:0;width:min(98vw,1700px);height:min(96dvh,1100px);max-width:none;max-height:none;margin:auto;padding:0;border:1px solid #222;background:white;box-shadow:0 25px 90px #0004;overflow:hidden}
+.figure-dialog::backdrop{background:rgba(0,0,0,.75);backdrop-filter:blur(8px)}
+.figure-dialog-layout{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.figure-dialog-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px clamp(18px,3vw,40px);border-bottom:1px solid #ddd}
+.figure-dialog-header h2{font-size:clamp(1.35rem,2.7vw,2.4rem);line-height:1.2;margin:0}
+.figure-dialog-header p{margin:0;color:#555;font-size:.83rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.figure-dialog-header button{border-radius:999px;border:1px solid #111;background:#111;color:#fff;padding:12px 22px;font-size:1rem;font-weight:800;white-space:nowrap;cursor:pointer}
+.figure-dialog-body{min-height:0;overflow:auto;padding:clamp(12px,2.5vw,42px);display:flex;flex-direction:column;justify-content:center}
+.figure-dialog-body .motion-stage{border:0;background:white;padding:0;max-width:1350px;width:100%;margin:0 auto}
+.figure-dialog-body .motion-stage svg{width:100%;height:auto;max-height:min(66dvh,740px)}
+.motion-fullscreen-caption{font-size:clamp(1.35rem,2.6vw,2.4rem);font-weight:650;line-height:1.38;max-width:1300px;width:100%;min-height:3em;margin:26px auto 8px;text-align:center;color:#111}
+.figure-dialog-footer{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:12px clamp(18px,3vw,40px);background:#f7f7f5;border-top:1px solid #ddd;font-size:.95rem;color:#333}
+.figure-dialog-footer strong{font-size:1rem}
+@media(max-width:700px){.motion-controls .motion-expand{width:100%;margin-left:0}.figure-dialog{width:100vw;height:100dvh}.figure-dialog-header{padding:12px}.figure-dialog-header button{padding:10px 13px}.figure-dialog-body{padding:12px;justify-content:start}.figure-dialog-body .motion-stage svg{min-height:0}.motion-fullscreen-caption{font-size:1.35rem}.figure-dialog-footer{padding:12px;font-size:.8rem}}
+@media(prefers-reduced-motion:reduce){.motion-stage .target-cell.visible,.motion-stage .focus-ring.visible{animation:none!important}}
