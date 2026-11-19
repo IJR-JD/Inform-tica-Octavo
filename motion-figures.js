@@ -505,5 +505,6 @@ function render(type,root){
   };
   if(reduce)p.paint(p.steps.length-1,false);else{p.paint(0);schedule()}
 }
-window.AnimatedExcelFigures={render,lessons:Object.keys(LESSONS),source:"motion-figures.js"};
+function loopMs(type){const d=document.createElement("div"),pl=Player(type,d);let t=0;pl.steps.forEach((_,i)=>t+=pl.duration(i));pl.destroy();return t}
+window.AnimatedExcelFigures={render,loopMs,lessons:Object.keys(LESSONS),source:"motion-figures.js"};
 })();

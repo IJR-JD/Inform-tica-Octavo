@@ -17,8 +17,8 @@
 .hub-topic-card>.hub-topic-actions{padding-bottom:22px;padding-top:14px}
 .hub-topic-card:not(.locked):hover{box-shadow:0 18px 40px -24px #0005}
 .hub-topic-preview{display:block;position:relative;width:100%;padding:0;border:0;border-bottom:1px solid var(--line,#ddd);background:#f7f7f5;cursor:pointer;aspect-ratio:16/9;overflow:hidden}
-.hub-topic-preview img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
-.hub-topic-card:hover .hub-topic-preview img{transform:scale(1.025)}
+.hub-topic-preview img,.hub-topic-preview video{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.hub-topic-card:hover .hub-topic-preview img,.hub-topic-preview video{transform:scale(1.025)}
 .hub-topic-preview span{position:absolute;left:14px;bottom:12px;background:#111;color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.06em;padding:7px 12px;border-radius:999px;opacity:.92}
 .hub-topic-number{font-variant-numeric:tabular-nums}
 .hub-topic-status{border-radius:999px}
@@ -49,4 +49,6 @@
 .button{border-radius:999px}
 
 @media(max-width:800px){.hub-figure{padding:16px}.hub-figure-head{grid-template-columns:1fr;gap:10px}}
-@media(prefers-reduced-motion:reduce){.hub-topic-preview img,.hub-topic-card{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.hub-topic-preview img,.hub-topic-preview video,.hub-topic-card{transition:none!important}}
+
+.topic-fullhd-panel{width:100%;padding:14px;border:1px solid #ddd;background:#fff;margin-bottom:18px}.topic-fullhd-panel p{font-size:.74rem;font-weight:800;letter-spacing:.1em;margin:0 0 10px}.topic-fullhd-video{display:block;width:100%;max-height:650px;aspect-ratio:16/9;object-fit:contain;background:#111;border-radius:6px}
