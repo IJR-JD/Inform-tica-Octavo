@@ -130,6 +130,16 @@ try{
  await verify(page,5);
  ok(await page.locator("#modulePercent").innerText()==="100%","Module 4 registers 5/5 exercises");
  ok(await page.locator("#finishModule").isVisible(),"Four-module milestone unlocked");
+ await page.goto(ORIGIN+"/",{waitUntil:"domcontentloaded"});
+ await page.locator(".hub-topic-card").first().waitFor();
+ for(let index=0;index<4;index++){
+  const card=page.locator(".hub-topic-card").nth(index);
+  ok((await card.locator(".hub-topic-status").innerText()).includes("COMPLETED"),"Learning Hub card "+(index+1)+" reflects verified completion");
+  ok((await card.locator(".hub-topic-progress strong").innerText()).includes("100%"),"Learning Hub card "+(index+1)+" shows 100%");
+ }
+ await page.locator(".hub-topic-card").nth(3).locator(".theory-action").click();
+ ok(page.url().includes("/unidad-04-excel/"),"Hub fourth module card routes to working fourth module");
+ await page.locator("#module-step-5 .module-sheet").waitFor({state:"visible"});
  await page.reload({waitUntil:"domcontentloaded"});
  await page.locator("#module-step-5 .module-sheet").waitFor({state:"visible"});
  ok(await page.locator("#modulePercent").innerText()==="100%","Module 4 progress persists");
