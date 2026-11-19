@@ -7,12 +7,20 @@
 "use strict";
 const bank=window.IJRDiagnosticBank;
 if(!bank||!Array.isArray(bank.questions)||bank.questions.length!==24)return;
-const KEY="ijr-ti8-diagnostic-exam-v2",DURATION=30*60*1000;
+const KEY="ijr-ti8-diagnostic-exam-v3",DURATION=30*60*1000;
+const INSTITUTIONAL_DOMAIN="ijr.edu.co";
+function validSchoolEmail(email){
+ const v=String(email||"").trim().toLowerCase();
+ if(v.length>180||!v||/\s/.test(v))return false;
+ const parts=v.split("@");
+ if(parts.length!==2||!(/^[a-z0-9._%+\-]+$/.test(parts[0])))return false;
+ return parts[1]===INSTITUTIONAL_DOMAIN||parts[1].endsWith("."+INSTITUTIONAL_DOMAIN);
+}
 const $=id=>document.getElementById(id);
 const make=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
 const validAnswers=Object.fromEntries(bank.questions.map(q=>[q.id,q]));
 const now=()=>Date.now();
-const blank=()=>({v:"exam-2026-11-19-v2",started:null,deadline:null,position:0,answers:{},code:"",status:"ready",submittedAt:null});
+const blank=()=>({v:"exam-2026-11-19-v3",started:null,deadline:null,position:0,answers:{},institutionalEmail:"",status:"ready",submittedAt:null});
 let state=blank();
 try{
  const raw=JSON.parse(localStorage.getItem(KEY)||"null");
@@ -23,7 +31,7 @@ try{
    if(Object.hasOwn(validAnswers,id)&&typeof val==="string"&&val.length<=100)state.answers[id]=val;
   }
   state.position=Number.isSafeInteger(raw.position)?Math.max(0,Math.min(23,raw.position)):0;
-  state.code=typeof raw.code==="string"?raw.code.replace(/[^A-Za-z0-9_-]/g,"").slice(0,24):"";
+  state.institutionalEmail=typeof raw.institutionalEmail==="string"&&validSchoolEmail(raw.institutionalEmail)?raw.institutionalEmail.trim().toLowerCase():"";
   if(state.status!=="ready"&&(!Number.isFinite(state.deadline)||!Number.isFinite(state.started)))state=blank();
  }
 }catch{}
@@ -62,6 +70,13 @@ function setProgress(){
 }
 function start(){
  if(state.status!=="ready")return;
+ const email=$("examStudentEmail").value.trim().toLowerCase();
+ if(!validSchoolEmail(email)){
+  $("examIdentityError").hidden=false;
+  $("examIdentityError").textContent="Ingresa un correo institucional válido del dominio @ijr.edu.co para comenzar.";
+  $("examStudentEmail").focus();return;
+ }
+ state.institutionalEmail=email;$("examIdentityError").hidden=true;
  state.started=now();state.deadline=state.started+DURATION;state.status="active";state.submittedAt=null;
  state.position=0;state.answers={};save();render();
 }
@@ -217,12 +232,12 @@ function report(){
  const actions=make("div","exam-result-actions");
  const download=make("button","exam-primary","Exportar perfil (JSON)");download.type="button";
  download.onclick=()=>{
-  const info={schema:"IJR-DIAGNOSTICO-EXAM-v2",timestamp:new Date(state.submittedAt).toISOString(),code:state.code||null,score:n,max:24,answered:answered(),category:cat,domains:summary,minutesAllowed:DURATION/60000,completion:state.status,privacy:"Resultados orientativos; no contiene respuestas individuales."};
-  const file=new Blob([JSON.stringify(info,null,2)],{type:"application/json"});const url=URL.createObjectURL(file),a=make("a");a.href=url;a.download="IJR-diagnostico-"+(state.code||"anonimo")+".json";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  const info={schema:"IJR-DIAGNOSTICO-EXAM-v3",timestamp:new Date(state.submittedAt).toISOString(),institutional_email:state.institutionalEmail,identity_verified:false,score:n,max:24,answered:answered(),category:cat,domains:summary,minutesAllowed:DURATION/60000,completion:state.status,privacy:"Resultados orientativos; correo declarado, todavía no verificado por Supabase. Sin respuestas individuales."};
+  const file=new Blob([JSON.stringify(info,null,2)],{type:"application/json"});const url=URL.createObjectURL(file),a=make("a");a.href=url;a.download="IJR-diagnostico-perfil.json";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
  };
  const redo=make("button","exam-secondary","Realizar un nuevo intento");redo.type="button";redo.onclick=()=>{if(!confirm("¿Iniciar un nuevo intento? Se reemplazarán el resultado y las respuestas de este navegador."))return;state=blank();save();render()};
  actions.append(download,redo);root.append(actions);
- root.append(make("p","exam-privacy","El informe se almacena únicamente en tu navegador. No envía datos al colegio ni permite calificación oficial antifraude."));
+ root.append(make("p","exam-privacy","El informe se almacena únicamente en tu navegador. No envía datos al colegio: el correo declarado todavía no ha sido verificado mediante autenticación institucional."));
 }
 function render(){
  const ready=state.status==="ready",active=state.status==="active",done=!ready&&!active;
@@ -232,8 +247,9 @@ function render(){
  if(ready){
   $("examDuration").textContent="30 minutos";
   $("examStart").onclick=start;
-  $("examStudentCode").value=state.code;
-  $("examStudentCode").oninput=e=>{state.code=e.target.value.replace(/[^A-Za-z0-9_-]/g,"").slice(0,24);e.target.value=state.code;save()};
+  $("examStudentEmail").value=state.institutionalEmail;
+  $("examIdentityError").hidden=true;
+  $("examStudentEmail").oninput=e=>{state.institutionalEmail=e.target.value.trim().toLowerCase().slice(0,180);$("examIdentityError").hidden=true;save()};
  }else if(active){
   if(state.deadline<=now()){finish("expired");return}
   $("examReview").hidden=true;$("examQuestion").hidden=false;$("examActions").hidden=false;
