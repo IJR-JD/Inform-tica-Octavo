@@ -67,6 +67,7 @@ function render(type,root){
  controls.append(back,play,forward,count);root.append(wrapper,controls,description);
  const texts=captions(type);let step=0,isPlaying=false;
  const svg=wrapper.querySelector("svg");
+ const reduceMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
  function toggle(id,yes){const e=svg.querySelector("#"+id);if(e)e.classList.toggle("visible",yes)}
  function paint(n){step=Math.max(0,Math.min(texts.length-1,n));
    // reset and reconstruct visible stages, so stepping backward is deterministic.
@@ -87,7 +88,9 @@ function render(type,root){
  forward.onclick=()=>{stop();paint(step+1)};
  play.onclick=()=>{if(isPlaying){stop();paint(step)}else{if(step===texts.length-1)step=0;isPlaying=true;paint(step);schedule()}};
  paint(0);
- // Students can advance animation manually; do not autoplay for accessibility.
+ // Autoplay each lesson to show the instructional procedure immediately.
+ // Reduced-motion settings keep the diagram in its fully explained state.
+ if(reduceMotion){paint(texts.length-1)}else{isPlaying=true;paint(0);schedule()}
 }
 window.AnimatedExcelFigures={render,source:"unidad-01-excel/animated-figures.js"};
 })();
