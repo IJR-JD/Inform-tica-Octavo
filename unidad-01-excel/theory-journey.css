@@ -93,3 +93,87 @@ html{scroll-behavior:smooth}
 @media(max-width:1060px){.journey-layout{grid-template-columns:1fr}.journey-sidebar{position:static}.journey-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.journey-nav-item{border-right:1px solid #ddd}.journey-intro-grid{grid-template-columns:1fr}.journey-exercise-area .guided-layout{grid-template-columns:1fr}}
 @media(max-width:650px){.journey-nav{grid-template-columns:1fr}.journey-stage-bar{grid-template-columns:repeat(2,minmax(0,1fr))}.journey-stage{padding:18px}.journey-action-row{display:grid;gap:12px}.journey-next{width:100%}.journey-video-tools{display:grid}.course-hero{padding:22px}.course-hero h1{font-size:2.25rem!important}.journey-practice-path{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}}
+
+
+/* 2026-11-19: single-page, authentic spreadsheet learning experience.
+   Reuses the institutional white-and-black visual language. */
+.journey-layout{grid-template-columns:minmax(220px,.24fr) minmax(0,1fr)}
+.journey-sidebar{top:20px}
+.journey-sidebar-title{font-size:.73rem}
+.journey-nav-item{border-bottom:1px solid #e6e6e6;text-decoration:none}
+.journey-nav-item:visited{color:#222}
+.journey-nav-item:hover{background:#f4f4f4}
+.journey-nav-item.is-done{background:#f6f6f6}
+.journey-nav-item .journey-status{font-weight:800}
+.journey-nav-item:focus-visible,.study-next-link:focus-visible{outline:3px solid #222;outline-offset:-3px}
+.journey-stage{border:0;background:none;padding:0;display:grid;gap:27px}
+.study-lesson{border:1px solid #cfcfcf;background:white;padding:clamp(20px,2.4vw,34px);min-width:0;scroll-margin-top:20px}
+.study-lesson:target{outline:2px solid #222;outline-offset:3px}
+.study-lesson-head{padding-bottom:20px;border-bottom:1px solid #e6e6e6;margin-bottom:24px}
+.study-index{font:800 .72rem/1.5 system-ui,sans-serif;letter-spacing:.13em;color:#555}
+.study-lesson-head h2{font-size:clamp(1.6rem,2.7vw,2.6rem);line-height:1.1;letter-spacing:-.04em;margin:9px 0 12px;color:#141414}
+.study-lesson-head p{font-size:.98rem;line-height:1.75;color:#424242;max-width:90ch}
+.study-foundation{display:grid;gap:15px}
+.study-lesson .ped-card,.study-lesson .ped-intro{margin:0!important;border:1px solid #dedede;border-top:2px solid #202020;padding:clamp(16px,2vw,24px);background:#fff}
+.study-lesson .ped-intro{border-top-width:3px;border-color:#222}
+.study-lesson .ped-kicker{color:#555!important}
+.study-lesson .ped-glossary{grid-template-columns:repeat(2,minmax(0,1fr))}
+.study-lesson .ped-term{background:#f7f7f7;border-color:#e2e2e2}
+.study-lesson .ped-term dt{color:#222}
+.study-lesson .ped-calculation{background:#f5f5f5;border-left-color:#222;color:#222}
+.study-lesson .ped-sheet td.ped-cell-focus{background:#eaeaea;outline-color:#222;color:#171717}
+.study-lesson .ped-list li::marker{color:#111}
+.study-lesson .ped-transfer{background:#f5f5f5}
+.study-video{border:1px solid #ddd;margin:20px 0;background:#fafafa;padding:18px}
+.study-video-header{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:0 0 12px}
+.study-video-header h3{margin:0;font-size:1.12rem}
+.study-video-header span{font-size:.7rem;letter-spacing:.11em;font-weight:750;color:#666}
+.study-video video{display:block;width:min(100%,960px);max-height:540px;aspect-ratio:16/9;object-fit:contain;background:#111;margin:auto}
+.study-video-note{font-size:.82rem;line-height:1.5;color:#666;margin:11px 0 0}
+.study-steps,.study-review{border:1px solid #ddd;margin:15px 0;background:white}
+.study-steps>summary,.study-review>summary{cursor:pointer;padding:16px 20px;font-size:.91rem;font-weight:750;list-style-position:inside;color:#1a1a1a}
+.study-steps[open]>summary,.study-review[open]>summary{border-bottom:1px solid #ddd;background:#f8f8f8}
+.study-steps>.ped-card,.study-review>.ped-card{border:0!important;border-top:0!important}
+.study-activity{border:1px solid #151515;padding:clamp(18px,2.2vw,29px);margin-top:25px;background:#fff}
+.study-activity-head{font-size:.72rem;font-weight:850;letter-spacing:.13em;color:#555}
+.study-activity h3{margin:8px 0 10px;font-size:clamp(1.4rem,2.2vw,1.9rem);color:#111}
+.study-activity>p{font-size:.97rem;line-height:1.7;color:#333;margin:0 0 18px}
+.live-sheet{border:1px solid #bcbcbc;background:#fff}
+.live-sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid #ccc;background:#f6f6f6}
+.live-sheet-head strong{font-size:.73rem;letter-spacing:.09em}
+.live-sheet-head small{font-size:.74rem;color:#555}
+.live-formula-bar{display:grid;grid-template-columns:66px 36px minmax(0,1fr);align-items:center;border-bottom:1px solid #bdbdbd;min-height:45px}
+.live-cell-address{font:750 .89rem ui-monospace,Consolas,monospace;border-right:1px solid #ddd;padding:11px 12px}
+.live-fx{text-align:center;font-style:italic;color:#666;border-right:1px solid #ddd}
+.live-formula{width:100%;min-width:0;box-sizing:border-box;font: .93rem ui-monospace,Consolas,monospace;border:0;background:white;padding:11px;outline-offset:-3px}
+.live-sheet-scroll{max-width:100%;overflow:auto}
+.live-spreadsheet{border-collapse:separate;border-spacing:0;table-layout:fixed;min-width:565px;width:100%;font-size:.83rem;color:#202020}
+.live-spreadsheet th,.live-spreadsheet td{box-sizing:border-box;border-right:1px solid #ddd;border-bottom:1px solid #ddd;height:48px;padding:8px 10px;min-width:100px;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.live-spreadsheet th{background:#f2f2f2;text-align:center;font-weight:750;color:#555}
+.live-spreadsheet tr>th:first-child{min-width:47px;width:47px;max-width:47px;position:sticky;left:0;z-index:1}
+.live-spreadsheet td{cursor:cell;position:relative;background:white;outline-offset:-2px}
+.live-spreadsheet td.live-readonly{background:#fafafa;color:#535353}
+.live-spreadsheet td.live-editable{background:#f5f5f5;box-shadow:inset 0 0 0 1px #aaa}
+.live-spreadsheet td.live-selected{box-shadow:inset 0 0 0 2px #161616;background:#ededed;z-index:2}
+.live-spreadsheet td.live-error{color:#a52727;font-weight:750}
+.live-spreadsheet td:focus-visible{outline:3px solid #111;outline-offset:-4px}
+.live-cell-view{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.live-cell-editor{position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;border:2px solid #222;padding:9px;background:#fff;color:#111;font: .88rem ui-monospace,Consolas,monospace;z-index:3}
+.live-computed{padding:10px 14px;background:#f9f9f9;color:#444;font:.82rem/1.5 ui-monospace,Consolas,monospace;border-top:1px solid #ddd;overflow-wrap:anywhere}
+.live-sheet-actions{display:flex;gap:10px;flex-wrap:wrap;padding:14px;border-top:1px solid #ddd}
+.live-check,.live-reset{padding:11px 18px;min-height:44px;font-weight:750;cursor:pointer;border:1px solid #111}
+.live-check{background:#111;color:#fff}
+.live-reset{background:#fff;color:#111}
+.live-feedback{margin:0;padding:13px 15px;background:#f7f7f7;font-size:.87rem;line-height:1.6;border-top:1px solid #ddd;color:#333}
+.live-feedback-success{border-left:4px solid #222;background:#eff2ef}
+.live-feedback-error{border-left:4px solid #a63f2a;background:#fff4f0}
+.live-sheet button:focus-visible{outline:3px solid #555;outline-offset:2px}
+.study-continue{display:flex;justify-content:flex-end;border-top:1px solid #ddd;padding-top:20px;margin-top:25px}
+.study-next-link{background:#151515;color:white!important;padding:12px 18px;text-decoration:none;font-weight:750;font-size:.88rem}
+.study-next-link:hover{background:#333}
+#openPractice{display:block!important;border:1px solid #111;background:#111;color:#fff;padding:16px 25px;font-weight:800;cursor:pointer;min-height:52px;margin:25px 0}
+#openPractice[hidden]{display:none!important}
+.journey-stage-bar,.journey-heading{display:none}
+@media(max-width:1100px){.study-lesson .ped-glossary{grid-template-columns:1fr}}
+@media(max-width:880px){.journey-layout{grid-template-columns:1fr}.journey-sidebar{position:static}.journey-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.journey-sidebar-title{padding:12px 16px}}
+@media(max-width:640px){.journey-nav{grid-template-columns:1fr}.study-lesson{padding:17px}.study-video-header,.live-sheet-head{display:grid;gap:5px}.live-sheet-actions>*{flex:1}.journey-stage{gap:16px}}
