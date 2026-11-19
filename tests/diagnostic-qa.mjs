@@ -10,7 +10,7 @@ const ORIGIN="http://127.0.0.1:8765";
 const page=await browser.newPage({viewport:{width:1366,height:900},acceptDownloads:true});
 let bank;
 const exceptions=[];page.on("pageerror",e=>exceptions.push(String(e)));
-async function fresh(){await page.goto(ORIGIN+"/unidad-00-diagnostico/?qa=exam-v2",{waitUntil:"domcontentloaded"});await page.evaluate(()=>localStorage.removeItem("ijr-ti8-diagnostic-exam-v2"));await page.reload({waitUntil:"domcontentloaded"})}
+async function fresh(){await page.goto(ORIGIN+"/unidad-00-diagnostico/?qa=exam-v2",{waitUntil:"domcontentloaded"});await page.evaluate(()=>localStorage.removeItem("ijr-ti8-diagnostic-exam-v3"));await page.reload({waitUntil:"domcontentloaded"})}
 async function go(i){await page.locator("#examQuestionNav button").nth(i).click()}
 async function answer(i,val){
  await go(i);
@@ -35,10 +35,15 @@ try{
  ok(await page.locator("#examIntro").isVisible(),"Instructions appear before start");
  ok(await page.locator("#examRunner").isHidden(),"No questions are visible until starting");
  ok(await page.locator("#examClock").count()===1,"Exam timer present");
- ok(await page.locator("#examStudentCode").count()===1,"Optional student code available");
- await page.locator("#examStudentCode").fill("G8-009");
+ ok(await page.locator("#examStudentEmail").count()===1,"Institutional email field is available");
+ await page.locator("#examStart").click();
+ ok(await page.locator("#examIntro").isVisible(),"Missing institutional email cannot start");
+ await page.locator("#examStudentEmail").fill("personal@gmail.com");
+ await page.locator("#examStart").click();
+ ok(await page.locator("#examIntro").isVisible(),"Non-institutional domain is rejected");
+ await page.locator("#examStudentEmail").fill("alumna@ijr.edu.co");
  await page.reload({waitUntil:"domcontentloaded"});
- ok((await page.locator("#examStudentCode").inputValue())==="G8-009","Optional code persists on reload before starting");
+ ok((await page.locator("#examStudentEmail").inputValue())==="alumna@ijr.edu.co","Institutional email persists before exam starts");
  await page.locator("#examStart").click();
  ok(await page.locator("#examRunner").isVisible(),"Start opens exam");
  ok(await page.locator("#examIntro").isHidden(),"Instructions removed during exam");
@@ -48,7 +53,7 @@ try{
  ok(await page.locator("#examQuestion figure").count()===1,"Practical illustration appears for question");
  const remaining=await page.locator("#examClock").innerText();
  ok(/^\d\d:\d\d$/.test(remaining),"Countdown formatted as MM:SS");
- const state1=await page.evaluate(()=>JSON.parse(localStorage.getItem("ijr-ti8-diagnostic-exam-v2")));
+ const state1=await page.evaluate(()=>JSON.parse(localStorage.getItem("ijr-ti8-diagnostic-exam-v3")));
  ok(Number.isFinite(state1.deadline)&&state1.deadline-state1.started===30*60*1000,"Timer deadline is fixed thirty minutes");
  await page.locator('#examQuestion input[type="radio"]').first().check();
  ok((await page.locator("#examAnswered").innerText()).includes("1 de 24"),"Answer immediately counted");
@@ -56,9 +61,9 @@ try{
  ok((await page.locator("#examQuestionCounter").innerText()).includes("02 / 24"),"Next advances one question");
  await page.locator("#examBack").click();
  ok((await page.locator("#examQuestionCounter").innerText()).includes("01 / 24"),"Previous goes back one question");
- const originalDeadline=(await page.evaluate(()=>JSON.parse(localStorage.getItem("ijr-ti8-diagnostic-exam-v2")))).deadline;
+ const originalDeadline=(await page.evaluate(()=>JSON.parse(localStorage.getItem("ijr-ti8-diagnostic-exam-v3")))).deadline;
  await page.reload({waitUntil:"domcontentloaded"});
- const currentDeadline=(await page.evaluate(()=>JSON.parse(localStorage.getItem("ijr-ti8-diagnostic-exam-v2")))).deadline;
+ const currentDeadline=(await page.evaluate(()=>JSON.parse(localStorage.getItem("ijr-ti8-diagnostic-exam-v3")))).deadline;
  ok(currentDeadline===originalDeadline,"Reload does not reset exam clock");
  ok((await page.locator("#examAnswered").innerText()).includes("1 de 24"),"Answer persists after reload");
  // Check visual figures in the existing domain contexts.
@@ -90,10 +95,11 @@ try{
  const event=page.waitForEvent("download");
  await page.locator(".exam-result-actions button").first().click();
  const dl=await event;
- ok(dl.suggestedFilename().includes("G8-009"),"Optional code is included in filename");
+ ok(dl.suggestedFilename()==="IJR-diagnostico-perfil.json","Export filename omits student email");
  const fs=await import("node:fs/promises");
  const parsed=JSON.parse(await fs.readFile(await dl.path(),"utf8"));
  ok(parsed.score===12&&parsed.domains.length===6,"JSON export accurately reflects score and six domains");
+ ok(parsed.institutional_email==="alumna@ijr.edu.co"&&parsed.identity_verified===false,"Export identifies declared institutional email without falsely claiming verification");
  ok(!Object.hasOwn(parsed,"answers"),"Export excludes individual responses");
  // Retake, all correct keys, then timeout test in a separate attempt.
  page.once("dialog",d=>d.accept());
@@ -111,7 +117,7 @@ try{
  await page.locator("#examStart").click();
  await answer(0,String(bank.questions[0].correct));
  await page.evaluate(()=>{
-  const key="ijr-ti8-diagnostic-exam-v2";
+  const key="ijr-ti8-diagnostic-exam-v3";
   const s=JSON.parse(localStorage.getItem(key));
   s.deadline=Date.now()-1;
   localStorage.setItem(key,JSON.stringify(s));
