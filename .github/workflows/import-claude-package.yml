@@ -33,6 +33,7 @@ jobs:
           gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
             --pattern 'Inform-tica-Octavo-completo.zip' --dir /tmp/claude-package
           test -s /tmp/claude-package/Inform-tica-Octavo-completo.zip
+          echo 'd6ad80f0a1d67cb3bc161a2414e20486a064b05dba5e4f1de5de2040c497e39a  /tmp/claude-package/Inform-tica-Octavo-completo.zip' | sha256sum -c -
       - name: Validate and extract original files safely
         run: |
           python3 - <<'PY'
