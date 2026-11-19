@@ -1,0 +1,52 @@
+/* Hub visual refinements · IJR Informática 8
+   Keeps the original black/white editorial system; adds one accent green
+   (same as the animated figures), softer depth and clearer hierarchy. */
+:root{--accent:#176440;--accent-soft:#eef6f0;--accent-line:#9cc7a8}
+
+/* Overview */
+.hub-overview{border-radius:14px;position:relative;overflow:hidden}
+.hub-overview::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,var(--accent-soft),transparent 70%);pointer-events:none}
+.global-progress-card .progress-track span,.theory-progress-card .progress-track span,.hub-topic-progress .progress-track span{background:var(--accent)!important}
+.sequence-rule{border-left-color:var(--accent)!important}
+
+/* Topic cards with GIF preview */
+.hub-topic-card{border-radius:14px;padding:0!important;overflow:hidden;gap:0!important;align-content:start;box-shadow:0 1px 0 #0000000a}
+.hub-topic-card>*:not(.hub-topic-preview){padding-left:24px;padding-right:24px}
+.hub-topic-card>.hub-topic-top{padding-top:20px}
+.hub-topic-card>div:nth-child(3){padding-top:10px;padding-bottom:16px}
+.hub-topic-card>.hub-topic-actions{padding-bottom:22px;padding-top:14px}
+.hub-topic-card:not(.locked):hover{box-shadow:0 18px 40px -24px #0005}
+.hub-topic-preview{display:block;position:relative;width:100%;padding:0;border:0;border-bottom:1px solid var(--line,#ddd);background:#f7f7f5;cursor:pointer;aspect-ratio:16/9;overflow:hidden}
+.hub-topic-preview img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.hub-topic-card:hover .hub-topic-preview img{transform:scale(1.025)}
+.hub-topic-preview span{position:absolute;left:14px;bottom:12px;background:#111;color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.06em;padding:7px 12px;border-radius:999px;opacity:.92}
+.hub-topic-number{font-variant-numeric:tabular-nums}
+.hub-topic-status{border-radius:999px}
+.hub-topic-card .eyebrow{color:var(--accent)}
+
+/* Theory page */
+.theory-hero,.workshop-hero,.learning-goals-panel,.lab-zone,.concept-card{border-radius:14px}
+.hub-figure{margin-top:22px;border:1px solid #ddd;border-radius:14px;background:#f7f7f5;padding:26px}
+.hub-figure-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px;align-items:end;margin-bottom:18px}
+.hub-figure-head h2{font-size:clamp(1.6rem,2.6vw,2.2rem);margin:.3rem 0 0;letter-spacing:-.03em}
+.hub-figure-head p:not(.eyebrow){margin:0;color:#444;line-height:1.6}
+.hub-figure .eyebrow{color:var(--accent)}
+#hubFigure{max-width:1100px;margin:0 auto}
+.lesson-explain .concept-card{position:relative;transition:border-color .2s,transform .2s}
+.lesson-explain .concept-card:hover{border-color:#111;transform:translateY(-2px)}
+.lesson-explain .concept-card>span{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:850;padding:5px 10px;border-radius:999px}
+#theorySteps{counter-reset:s;list-style:none;padding:0;display:grid;gap:9px}
+#theorySteps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;line-height:1.5}
+#theorySteps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;font-size:.78rem;font-weight:800}
+#theoryMistake{border-left-color:#c97a1e!important;background:#fff8ef;padding:12px 14px!important;border-radius:0 8px 8px 0}
+
+/* Assessment */
+.quiz-option{border-radius:10px;transition:border-color .2s,background .2s}
+.quiz-option:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.answer-report{border-left-color:var(--accent)!important;border-radius:0 10px 10px 0}
+
+/* Buttons */
+.button{border-radius:999px}
+
+@media(max-width:800px){.hub-figure{padding:16px}.hub-figure-head{grid-template-columns:1fr;gap:10px}}
+@media(prefers-reduced-motion:reduce){.hub-topic-preview img,.hub-topic-card{transition:none!important}}

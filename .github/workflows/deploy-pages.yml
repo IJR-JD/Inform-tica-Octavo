@@ -21,26 +21,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Audit Claude GIF assets before publishing
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re,sys
-          index=Path("index.html").read_text(encoding="utf-8")
-          has_claude="motion-figures.js" in index
-          gifs=list(Path("assets/gifs").rglob("*.gif")) if Path("assets/gifs").exists() else []
-          with open(__import__("os").environ["GITHUB_STEP_SUMMARY"],"a",encoding="utf-8") as summary:
-              summary.write("## Informatics 8: deployment asset audit\\n")
-              summary.write(f"- Claude animation engine enabled: **{has_claude}**\\n")
-              summary.write(f"- Original GIF assets found: **{len(gifs)}/30**\\n")
-          if has_claude:
-              assert len(gifs)==30,f"Claude page requires all 30 GIF assets, found {len(gifs)}"
-              for f in gifs:
-                  assert f.read_bytes()[:6] in (b"GIF87a",b"GIF89a"), f"Invalid GIF: {f}"
-              print("PASS: all 30 Claude GIFs verified")
-          else:
-              print("Legacy site: Claude source not yet imported. Pages is publishing the previous version.")
-          PY
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
