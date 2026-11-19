@@ -8,6 +8,7 @@ let assertions=0;
 function ok(cond,message){assert.ok(cond,message);assertions++;console.log("PASS:",message)}
 const ORIGIN="http://127.0.0.1:8765";
 const page=await browser.newPage({viewport:{width:1366,height:900},acceptDownloads:true});
+let bank;
 const exceptions=[];page.on("pageerror",e=>exceptions.push(String(e)));
 async function fresh(){await page.goto(ORIGIN+"/unidad-00-diagnostico/?qa=exam-v2",{waitUntil:"domcontentloaded"});await page.evaluate(()=>localStorage.removeItem("ijr-ti8-diagnostic-exam-v2"));await page.reload({waitUntil:"domcontentloaded"})}
 async function go(i){await page.locator("#examQuestionNav button").nth(i).click()}
@@ -29,7 +30,7 @@ async function correctAnswers(n){
 }
 try{
  await fresh();
- const bank=await page.evaluate(()=>window.IJRDiagnosticBank);
+ bank=await page.evaluate(()=>window.IJRDiagnosticBank);
  ok(bank.questions.length===24&&bank.domains.length===6,"Bank retains 24 items and 6 domains");
  ok(await page.locator("#examIntro").isVisible(),"Instructions appear before start");
  ok(await page.locator("#examRunner").isHidden(),"No questions are visible until starting");
