@@ -5,7 +5,7 @@
 <meta name="description" content="Examen diagnóstico interactivo de informática de octavo: 24 preguntas, 30 minutos, una pregunta a la vez, figuras y perfil formativo por competencias.">
 <title>Examen diagnóstico · Módulo 00 | Instituto Jorge Robledo</title>
 <link rel="stylesheet" href="../styles.css">
-<link rel="stylesheet" href="exam-mode.css?v=ijr-exam-v2">
+<link rel="stylesheet" href="exam-mode.css?v=ijr-exam-v3">
 </head>
 <body>
 <header class="topbar"><a class="brand" href="../"><span class="brand-mark">IJR</span><span><small>Instituto Jorge Robledo · Informática 8.º</small><strong>Learning Hub · Examen diagnóstico</strong></span></a><div class="top-actions"><a class="button button-light" href="../">← Learning Hub</a></div></header>
@@ -20,7 +20,7 @@
 <ul><li>El cronómetro comienza al pulsar <strong>Iniciar examen</strong> y continúa aunque cierres o recargues la pestaña.</li><li>Puedes usar Anterior, Siguiente o la cuadrícula de preguntas para revisar y cambiar respuestas mientras quede tiempo.</li><li>Las respuestas se guardan automáticamente en este dispositivo.</li><li>Al finalizar el tiempo, el examen se entrega automáticamente. Las preguntas sin responder no suman puntos.</li><li>Las soluciones y explicaciones se muestran <strong>únicamente después de la entrega</strong>.</li></ul>
 <p>El resultado es orientativo. No es una calificación oficial ni bloquea los módulos siguientes.</p>
 </div>
-<aside><label for="examStudentCode">Código de estudiante (opcional)</label><input id="examStudentCode" type="text" maxlength="24" autocomplete="off" placeholder="G8-001" aria-describedby="examCodeHelp"><small id="examCodeHelp">Usa un código asignado, no un nombre, documento o correo. Tu perfil permanece en este navegador y puedes exportarlo.</small><button class="exam-primary" type="button" id="examStart">Iniciar examen de 30 minutos →</button></aside>
+<aside><label for="examStudentEmail">Correo institucional del estudiante (obligatorio)</label><input id="examStudentEmail" type="email" maxlength="180" autocomplete="email" inputmode="email" required placeholder="estudiante@ijr.edu.co" aria-describedby="examEmailHelp examIdentityError"><small id="examEmailHelp">Utiliza tu correo institucional del Instituto Jorge Robledo (dominio @ijr.edu.co). No se solicita contraseña. El correo se conserva únicamente en este navegador y aparece en el perfil que descargues.</small><p id="examIdentityError" role="alert" class="exam-identity-error" hidden>Ingresa un correo institucional válido.</p><button class="exam-primary" type="button" id="examStart">Iniciar examen de 30 minutos →</button><small>Importante: escribir un correo no prueba su propiedad. La validación con autenticación institucional Supabase está pendiente de acceso al proyecto del colegio.</small></aside>
 </section>
 <section id="examRunner" class="exam-runner" hidden aria-label="Examen en curso">
 <div class="exam-timer-shell" role="group" aria-label="Cronómetro y avance del examen">
@@ -38,5 +38,5 @@
 <section id="examResults" class="exam-results" hidden aria-label="Perfil de resultados"></section>
 <footer class="exam-privacy">Instituto Jorge Robledo · Informática 8.º · Diagnóstico formativo local. Sin calificación oficial. Las respuestas no se envían a servidores.</footer>
 </main>
-<script src="banco-preguntas.js?v=ijr-exam-v2"></script><script src="exam-mode.js?v=ijr-exam-v2"></script>
+<script src="banco-preguntas.js?v=ijr-exam-v3"></script><script src="exam-mode.js?v=ijr-exam-v3"></script>
 </body></html>
