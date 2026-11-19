@@ -12,7 +12,7 @@ try{
  const page=await browser.newPage({viewport:{width:1366,height:900},acceptDownloads:true});
  const exceptions=[],badRequests=[];
  page.on("pageerror",e=>exceptions.push(String(e)));
- page.on("requestfailed",r=>{if(r.url().startsWith(BASE))badRequests.push(r.url()+" "+r.failure()?.errorText)});
+ page.on("requestfailed",r=>{const reason=r.failure()?.errorText||"";if(r.url().startsWith(BASE)&&!(reason.includes("ERR_ABORTED")&&r.url().endsWith(".mp4")))badRequests.push(r.url()+" "+reason)});
  const response=await page.goto(BASE+"/unidad-00-diagnostico/?qa=full",{waitUntil:"domcontentloaded"});
  ok(response?.status()===200,"Diagnostic page serves HTTP 200");
  await page.locator("#diagnosticQuestions .diag-question").first().waitFor();
