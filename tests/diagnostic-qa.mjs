@@ -105,6 +105,7 @@ try{
  page.once("dialog",d=>d.accept());
  await page.locator(".exam-result-actions button").nth(1).click();
  ok(await page.locator("#examIntro").isVisible(),"Retake returns to introductory instructions");
+ await page.locator("#examStudentEmail").fill("alumna@ijr.edu.co");
  await page.locator("#examStart").click();
  await correctAnswers(24);
  await go(23);await page.locator("#examNext").click();
@@ -114,6 +115,7 @@ try{
  ok(await page.locator(".exam-domain-card").count()===6,"Perfect score retains six domain cards");
  page.once("dialog",d=>d.accept());
  await page.locator(".exam-result-actions button").nth(1).click();
+ await page.locator("#examStudentEmail").fill("alumna@ijr.edu.co");
  await page.locator("#examStart").click();
  await answer(0,String(bank.questions[0].correct));
  await page.evaluate(()=>{
