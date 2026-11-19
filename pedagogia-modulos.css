@@ -1,3 +1,4 @@
+.ped-deep-dive[hidden]{display:none!important}
 /* IJR | Profundización de teoría y práctica guiada | Informática 8 */
 .ped-deep-dive{margin:26px 0 32px;display:grid;gap:18px;min-width:0}
 .ped-intro,.ped-card{background:#fff;border:1px solid #d9dfe7;padding:clamp(18px,2.2vw,30px);min-width:0}
