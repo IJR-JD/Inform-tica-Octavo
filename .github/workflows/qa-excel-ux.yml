@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'unidad-00-diagnostico/**'
       - 'unidad-01-excel/**'
       - 'unidad-02-excel/**'
       - 'unidad-03-excel/**'
@@ -13,6 +14,7 @@ on:
       - 'tests/excel-ux-qa.mjs'
       - 'tests/excel-edge-qa.mjs'
       - 'tests/excel-modules-qa.mjs'
+      - 'tests/diagnostic-qa.mjs'
       - 'index.html'
       - '.github/workflows/qa-excel-ux.yml'
   workflow_dispatch:
@@ -20,7 +22,7 @@ permissions:
   contents: read
 jobs:
   real-browser:
-    name: Excel modules 01–04 · editable cells and mobile
+    name: Diagnostic 00 + Excel modules 01–04 · browser QA
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -50,3 +52,4 @@ jobs:
           node tests/excel-ux-qa.mjs
           node tests/excel-edge-qa.mjs
           node tests/excel-modules-qa.mjs
+          node tests/diagnostic-qa.mjs
