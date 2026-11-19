@@ -127,7 +127,8 @@ function spreadsheet(ex,index){
    td.dataset.cell=key;td.tabIndex=0;td.setAttribute("role","gridcell");
    td.setAttribute("aria-label",key+(editable?", celda objetivo editable":", celda editable"));
    const view=make("span","live-cell-view");td.append(view);
-   td.addEventListener("click",()=>select(key,true));
+   td.addEventListener("click",ev=>{if(ev.target.classList.contains("live-cell-editor"))return;select(key,true)});
+   td.addEventListener("focus",()=>{if(!editor){selected=key;updateViews()}});
    td.addEventListener("keydown",ev=>{
     if(ev.target!==td)return;
     if(ev.key==="Enter"||ev.key==="F2"){ev.preventDefault();select(key,true);}
