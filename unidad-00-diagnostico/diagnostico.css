@@ -1,0 +1,83 @@
+/* Instituto Jorge Robledo · Módulo 00: diagnóstico, mismo lenguaje visual del Learning Hub */
+.diag-shell{max-width:1500px;margin:0 auto;padding:clamp(18px,3vw,48px) clamp(16px,3vw,42px) 90px}
+.diag-breadcrumb{font-size:.88rem;color:#555;margin-bottom:20px}
+.diag-breadcrumb a{text-decoration:underline}
+.diag-hero{border:1px solid #151515;padding:clamp(24px,4vw,54px);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(250px,.6fr);gap:clamp(20px,3vw,48px)}
+.diag-kicker{font-size:.78rem;font-weight:850;letter-spacing:.12em;color:#555;text-transform:uppercase}
+.diag-hero h1{font-size:clamp(2.7rem,5.7vw,5rem);line-height:1.05;letter-spacing:-.055em;margin:15px 0 20px}
+.diag-lead{font-size:clamp(1.08rem,1.3vw,1.28rem);line-height:1.8;color:#393939;max-width:74ch}
+.diag-meta{border-left:1px solid #ddd;padding:10px 0 10px clamp(16px,3vw,30px);display:grid;align-content:center;gap:14px}
+.diag-meta strong{font-size:clamp(2.4rem,4vw,3.9rem);line-height:1;letter-spacing:-.05em}
+.diag-meta span{font-size:1.05rem;line-height:1.55}
+.diag-track{height:8px;background:#e8e8e8;width:100%}
+.diag-track span{display:block;height:100%;width:0;background:#111;transition:width .2s}
+.diag-meta small{color:#666;line-height:1.6;font-size:.86rem}
+.diag-instructions{margin:24px 0;padding:clamp(20px,2.6vw,32px);border:1px solid #ddd;background:#f9f9f9;display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.45fr);gap:24px}
+.diag-instructions h2{font-size:clamp(1.4rem,2.4vw,2rem);letter-spacing:-.025em;margin:0 0 11px}
+.diag-instructions p,.diag-instructions li{font-size:1.05rem;line-height:1.72;color:#373737}
+.diag-instructions ul{padding-left:23px;margin:12px 0}
+.diag-code{display:grid;align-content:start;gap:10px}
+.diag-code label{font-size:.92rem;font-weight:750}
+.diag-code input{border:1px solid #888;padding:12px;font-size:1.05rem;background:#fff;min-height:48px;max-width:100%}
+.diag-code small{font-size:.82rem;color:#666;line-height:1.5}
+.diag-questions{display:grid;gap:22px;margin:26px 0 32px}
+.diag-domain{border:1px solid #d7d7d7;background:#fff;scroll-margin-top:75px}
+.diag-domain-head{background:#f6f6f5;padding:clamp(21px,3vw,35px);border-bottom:1px solid #d7d7d7}
+.diag-domain-head h2{font-size:clamp(1.7rem,2.7vw,2.4rem);line-height:1.15;letter-spacing:-.035em;margin:10px 0}
+.diag-domain-head p{margin:0;color:#555;font-size:1.06rem;line-height:1.7}
+.diag-question-list{padding:clamp(18px,2.5vw,30px);display:grid;gap:18px}
+.diag-question{border:1px solid #ddd;padding:clamp(18px,2vw,25px);margin:0;min-width:0}
+.diag-question-title{font-size:1.13rem;font-weight:750;line-height:1.6;padding:0 8px;color:#191919;max-width:90ch}
+.diag-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.diag-option{display:flex;gap:13px;align-items:flex-start;border:1px solid #d7d7d7;padding:15px 18px;min-height:60px;cursor:pointer;font-size:1.02rem;line-height:1.55}
+.diag-option:hover{border-color:#222}
+.diag-option:has(input:checked){background:#ededed;border:2px solid #111;padding:14px 17px}
+.diag-option input{accent-color:#111;flex:none;margin-top:6px;width:18px;height:18px}
+.diag-option:focus-within{outline:3px solid #777;outline-offset:2px}
+.diag-input-label{display:grid;gap:9px;font-weight:750;font-size:1rem;max-width:600px;margin-top:17px}
+.diag-short{padding:14px 17px;font-size:1.1rem;border:1px solid #999;min-height:54px;width:100%}
+.diag-short:focus-visible,.diag-code input:focus-visible{outline:3px solid #222;outline-offset:3px}
+.diag-footer-actions{border:1px solid #151515;padding:clamp(23px,3vw,36px);display:grid;gap:15px;background:#fafafa}
+.diag-footer-actions h2{font-size:clamp(1.4rem,2.6vw,2rem);margin:0}
+.diag-footer-actions p{font-size:1.05rem;line-height:1.65;margin:0;color:#444}
+.diag-actions{display:flex;gap:12px;flex-wrap:wrap}
+.diag-actions button{border:1px solid #111;padding:15px 24px;min-height:52px;font-weight:750;font-size:1.04rem;cursor:pointer}
+.diag-actions button:first-child{background:#111;color:#fff}
+.diag-actions button:last-child{background:#fff;color:#111}
+.diag-results{margin:35px 0;border-top:4px solid #111;padding-top:32px;scroll-margin-top:100px}
+.diag-results[hidden]{display:none!important}
+.diag-result-hero{display:grid;grid-template-columns:minmax(230px,.42fr) minmax(0,1fr);gap:30px;border:1px solid #111;padding:clamp(23px,3.5vw,42px)}
+.diag-result-score strong{display:block;font-size:clamp(3.4rem,6vw,6rem);line-height:1.05;letter-spacing:-.07em}
+.diag-result-score p{font-weight:750;font-size:1.25rem;line-height:1.5}
+.diag-result-context h2{font-size:clamp(1.8rem,3vw,2.7rem);letter-spacing:-.04em}
+.diag-result-context p{font-size:1.12rem;line-height:1.75}
+.diag-results-title{font-size:2rem;letter-spacing:-.035em;margin:30px 0 20px}
+.diag-domain-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.diag-result-domain{padding:clamp(18px,2.2vw,28px);border:1px solid #ddd;display:grid;gap:13px}
+.diag-result-domain h4{font-size:1.26rem;margin:0}
+.diag-domain-stat{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.diag-domain-stat strong{font-size:2rem}
+.diag-domain-stat span{border:1px solid #bbb;padding:7px 10px;font-size:.85rem;font-weight:750}
+.diag-positive{background:#f2f6f2}
+.diag-medium{background:#f5f5f5}
+.diag-needs{background:#fff2ee}
+.diag-result-domain p{margin:0;color:#444;line-height:1.65;font-size:.98rem}
+.diag-lesson-link{font-size:.98rem;font-weight:750;text-underline-offset:4px}
+.diag-recommendations{border:1px solid #ddd;background:#f7f7f7;margin:22px 0;padding:clamp(22px,3vw,32px)}
+.diag-recommendations h3{font-size:1.6rem;margin:0 0 10px}
+.diag-recommendations p,.diag-recommendations li{font-size:1.03rem;line-height:1.75}
+.diag-review{border:1px solid #ccc;margin:25px 0}
+.diag-review>summary{font-size:1.14rem;font-weight:750;padding:20px;cursor:pointer}
+.diag-review-items{padding:18px;display:grid;gap:13px}
+.diag-review-question{padding:17px;border:1px solid #e4e4e4}
+.diag-review-question h4{margin:0 0 10px;font-size:1.07rem}
+.diag-review-question p{margin:7px 0;line-height:1.6}
+.diag-good{color:#235b32}.diag-incorrect{color:#9c3527}
+.diag-report-buttons{display:flex;flex-wrap:wrap;gap:12px}
+.diag-report-buttons button{min-height:51px;padding:13px 20px;cursor:pointer}
+.diag-privacy{font-size:.94rem;line-height:1.7;color:#555;border-left:3px solid #111;padding-left:15px}
+.diag-site-footer{border-top:1px solid #ddd;color:#666;font-size:.87rem;padding:25px 0;margin-top:35px}
+@media(max-width:800px){.diag-hero,.diag-instructions,.diag-result-hero{grid-template-columns:1fr}.diag-meta{border-left:0;border-top:1px solid #ddd;padding:18px 0 0}.diag-choice-grid,.diag-domain-results{grid-template-columns:1fr}}
+@media(max-width:540px){.diag-shell{padding-inline:15px}.diag-question-list{padding:12px}.diag-question{padding:13px}.diag-hero h1{font-size:2.8rem}.diag-result-score strong{font-size:3.4rem}.diag-actions{display:grid}.diag-actions button{width:100%}}
+@media print{.topbar,.diag-instructions,.diag-questions,.diag-footer-actions,.diag-report-buttons,.diag-review,.diag-site-footer{display:none!important}.diag-results{display:block!important;border:0}.diag-domain-results{grid-template-columns:1fr 1fr}.diag-shell{padding:0}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.diag-track span{transition:none!important}}
