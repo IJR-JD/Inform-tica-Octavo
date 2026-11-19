@@ -1,0 +1,41 @@
+name: QA · Excel editable UX (Chromium)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'unidad-01-excel/**'
+      - 'pedagogia-modulos.js'
+      - 'tests/excel-ux-qa.mjs'
+      - '.github/workflows/qa-excel-ux.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-browser:
+    name: 7 Excel lessons, working cells and mobile
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser QA tools
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Serve actual static site
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/ti8-server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8765/unidad-01-excel/ > /dev/null; then
+              echo 'Static site ready'
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/ti8-server.log
+          exit 1
+      - name: Verify user behavior in headless Chromium
+        run: node tests/excel-ux-qa.mjs
