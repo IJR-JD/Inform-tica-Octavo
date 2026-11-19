@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Examen diagnóstico formativo para informática de grado octavo: 24 preguntas, seis competencias y rutas de refuerzo.">
+<title>Módulo 00 · Diagnóstico de competencias digitales | IJR</title>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="diagnostico.css?v=20261119-00-v1">
+</head>
+<body>
+<header class="topbar">
+<a class="brand" href="../"><span class="brand-mark">IJR</span><span><small>Instituto Jorge Robledo · Informática 8</small><strong>Learning Hub · Evaluación diagnóstica</strong></span></a>
+<div class="top-actions"><a class="button button-light" href="../">← Learning Hub</a><a class="button button-dark" href="../unidad-01-excel/">Unidad 01 · Excel</a></div>
+</header>
+<main class="diag-shell">
+<nav class="diag-breadcrumb" aria-label="Ruta de navegación"><a href="../">Learning Hub</a> / 00 · Diagnóstico de entrada</nav>
+<section class="diag-hero" aria-labelledby="diagnosticHeading">
+<div>
+<p class="diag-kicker">MÓDULO 00 · PUNTO DE PARTIDA</p>
+<h1 id="diagnosticHeading">¿Qué sabes de informática?</h1>
+<p class="diag-lead">Descubre tus conocimientos iniciales antes de comenzar los módulos. Responde situaciones de la vida diaria, analiza datos e introduce algunas referencias y fórmulas. Al terminar recibirás un perfil por competencias y recomendaciones para fortalecer tu aprendizaje.</p>
+<p class="diag-lead"><strong>No es una nota definitiva, no tiene límite de tiempo y no bloquea los módulos posteriores.</strong></p>
+</div>
+<aside class="diag-meta" aria-label="Progreso del diagnóstico">
+<span class="diag-kicker">TU AVANCE</span>
+<strong>24</strong><span>preguntas · 6 competencias</span>
+<div class="diag-track" role="presentation"><span id="answerProgress"></span></div>
+<span id="answerCount" role="status" aria-live="polite">0 / 24 preguntas respondidas</span>
+<small>El progreso se guarda únicamente en este navegador. No se envían respuestas a ningún servidor.</small>
+</aside>
+</section>
+<section class="diag-instructions" aria-label="Instrucciones">
+<div>
+<h2>Instrucciones para el estudiante</h2>
+<ul>
+<li>Lee cada pregunta y responde sin consultar otras fuentes, para que el resultado sea útil.</li>
+<li>Cuando se solicite una referencia de Excel, escribe algo como <code>B2</code>. Cuando se solicite una fórmula, comienza por <code>=</code>.</li>
+<li>Responde con tranquilidad: puedes cambiar tus respuestas antes de generar el perfil.</li>
+<li>Puedes dejar preguntas vacías; aparecerán como no acertadas y el informe indicará cuántas respondiste.</li>
+</ul>
+<p>El resultado describe tu desempeño <strong>en estas actividades</strong>, no tus capacidades permanentes. Puedes repetirlo después de practicar.</p>
+</div>
+<div class="diag-code">
+<label for="studentCode">Código interno opcional (si el docente lo asignó)</label>
+<input id="studentCode" type="text" maxlength="24" pattern="[a-zA-Z0-9_-]*" autocomplete="off" placeholder="Ej.: G8-001" aria-describedby="codeHelp">
+<small id="codeHelp">Solo usa un código inventado o autorizado. No escribas nombre completo, documento, correo ni contraseña. El código solo aparecerá en el archivo exportado.</small>
+</div>
+</section>
+<div id="diagnosticQuestions" class="diag-questions" aria-label="Preguntas diagnósticas"></div>
+<section class="diag-footer-actions" aria-label="Terminar y evaluar">
+<h2>Genera tu perfil inicial</h2>
+<p id="remainingMessage" role="status" aria-live="polite">Revisa las respuestas y genera el informe.</p>
+<div class="diag-actions"><button type="button" id="submitDiagnostic">Evaluar y generar perfil</button><button type="button" id="restartDiagnostic">Reiniciar diagnóstico</button></div>
+</section>
+<section id="diagnosticResults" class="diag-results" aria-label="Resultado y perfil por competencias" hidden></section>
+<footer class="diag-site-footer">Instituto Jorge Robledo · Informática 8 · Evaluación orientativa y formativa. No registra calificaciones oficiales.</footer>
+</main>
+<script src="banco-preguntas.js?v=20261119-00-v1"></script>
+<script src="diagnostico.js?v=20261119-00-v1"></script>
+</body>
+</html>
