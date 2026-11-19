@@ -182,3 +182,69 @@ html{scroll-behavior:smooth}
 .live-spreadsheet td.live-editable:not(.live-target){background:#fff;box-shadow:none}
 .live-spreadsheet td.live-target{background:#f1f1f1;box-shadow:inset 0 0 0 1px #888;font-weight:750}
 .live-spreadsheet td.live-selected{background:#eaeaea;box-shadow:inset 0 0 0 2px #151515}
+
+/* v4 · Senior UX: sequential registration, larger reading scale and editable-grid proportions */
+.guided-shell{max-width:1720px!important;padding-inline:clamp(18px,3vw,54px)!important}
+.course-hero{padding:clamp(28px,3.6vw,56px)!important}
+.course-hero p,.journey-module-header p{font-size:clamp(1.07rem,1.25vw,1.22rem)!important;line-height:1.8!important}
+.journey-layout{grid-template-columns:minmax(260px,.23fr) minmax(0,1fr);gap:clamp(20px,2.3vw,34px)}
+.journey-sidebar{padding-block:16px}
+.journey-sidebar-title{font-size:.87rem;padding:14px 19px 19px}
+.journey-nav-item{min-height:72px;grid-template-columns:44px minmax(0,1fr) 36px;padding:17px 18px}
+.journey-nav-item .journey-num{font-size:1rem!important}
+.journey-nav-text{font-size:1.05rem!important;line-height:1.52}
+.journey-status{font-size:.92rem!important}
+.journey-nav-item.is-locked{opacity:.48;cursor:not-allowed;background:#f6f6f6;color:#555}
+.journey-nav-item.is-locked:hover{background:#f6f6f6}
+.journey-nav-item.is-done .journey-status{color:#1c5030}
+.study-lesson{padding:clamp(24px,3vw,45px);scroll-margin-top:24px}
+.study-lesson[hidden],.study-next-link[hidden]{display:none!important}
+.study-lesson-head h2{font-size:clamp(2rem,3.2vw,3.1rem)!important}
+.study-lesson-head p{font-size:1.17rem!important;line-height:1.8!important}
+.study-index,.study-activity-head{font-size:.88rem!important}
+.study-lesson .ped-intro,.study-lesson .ped-card{padding:clamp(20px,2.3vw,34px)!important}
+.study-lesson .ped-copy,.study-lesson .ped-list,.study-lesson .ped-transfer{font-size:1.12rem!important;line-height:1.85!important}
+.study-lesson .ped-h3{font-size:clamp(1.55rem,2.25vw,2.15rem)!important}
+.study-lesson .ped-term dt{font-size:1.05rem!important}
+.study-lesson .ped-term dd{font-size:1rem!important;line-height:1.7!important}
+.study-lesson .ped-sheet{font-size:1.05rem!important}
+.study-lesson .ped-sheet td,.study-lesson .ped-sheet th{padding:13px 17px!important}
+.study-lesson .ped-calculation{font-size:1.04rem!important;padding:17px 20px!important}
+.study-video{padding:clamp(17px,2.2vw,28px)!important}
+.study-video video{width:100%!important;max-height:650px!important}
+.study-video-header h3{font-size:1.32rem!important}
+.study-video-note,.study-video-header span{font-size:.98rem!important}
+.study-steps>summary,.study-review>summary{font-size:1.09rem!important;padding:18px 24px!important}
+.study-activity{padding:clamp(20px,2.6vw,38px)!important}
+.study-activity h3{font-size:clamp(1.8rem,2.7vw,2.35rem)!important}
+.study-activity>p{font-size:1.17rem!important;line-height:1.8!important}
+.live-sheet-head{padding:15px 19px}
+.live-sheet-head strong{font-size:.91rem!important}
+.live-sheet-head small{font-size:.9rem!important}
+.live-formula-bar{min-height:60px;grid-template-columns:78px 44px minmax(0,1fr)}
+.live-cell-address,.live-formula{font-size:1.15rem!important;padding:15px!important}
+.live-fx{font-size:1.25rem}
+.live-spreadsheet{min-width:700px;font-size:1.08rem!important}
+.live-spreadsheet th,.live-spreadsheet td{height:62px;min-width:125px;max-width:240px;padding:12px 16px}
+.live-spreadsheet tr>th:first-child{width:58px;min-width:58px;max-width:58px}
+.live-cell-editor{font-size:1.12rem!important;padding:11px!important}
+.live-computed{font-size:1.04rem!important;padding:14px 18px}
+.live-sheet-actions{padding:18px;gap:14px}
+.live-check,.live-reset{min-height:54px;font-size:1.06rem!important;padding:13px 20px!important}
+.live-feedback{font-size:1.07rem!important;line-height:1.75!important;padding:16px 20px}
+.study-next-link{font-size:1.08rem!important;min-height:50px;padding:15px 22px}
+.journey-practice-heading h2{font-size:clamp(2rem,3.2vw,3rem)!important}
+@media(max-width:950px){
+ .journey-layout{grid-template-columns:1fr}
+ .journey-sidebar{position:static}
+ .journey-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+ .journey-nav{grid-template-columns:1fr}
+ .study-lesson{padding:18px}
+ .study-lesson-head p,.study-activity>p{font-size:1.06rem!important}
+ .study-lesson .ped-copy,.study-lesson .ped-list{font-size:1.04rem!important}
+ .live-spreadsheet{min-width:700px}
+ .live-spreadsheet td,.live-spreadsheet th{height:60px}
+ .live-sheet-head{display:grid}
+}
