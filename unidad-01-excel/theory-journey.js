@@ -85,8 +85,8 @@ function cellValue(cells,k,seen=new Set()){
 function spreadsheet(ex,index){
  const shell=make("section","live-sheet");
  const head=make("div","live-sheet-head");
- head.append(make("strong","","HOJA DE EXCEL · ESCRIBE EN LAS CELDAS"));
- head.append(make("small","","Las celdas resaltadas se pueden editar · Enter confirma el dato"));
+ head.append(make("strong","","HOJA DE EXCEL · TODAS LAS CELDAS SON EDITABLES"));
+ head.append(make("small","","Las celdas con borde son las que se evaluarán · Enter confirma"));
  const bar=make("div","live-formula-bar");
  const address=make("output","live-cell-address",ex.editable[0]);
  address.setAttribute("aria-label","Dirección de la celda seleccionada");
@@ -108,7 +108,7 @@ function spreadsheet(ex,index){
  const actions=make("div","live-sheet-actions");
  const check=make("button","live-check","Comprobar mi hoja");check.type="button";
  const reset=make("button","live-reset","Reiniciar datos");reset.type="button";
- const feedback=make("div","live-feedback","Selecciona una celda editable, escribe tu respuesta y presiona Enter. Luego comprueba.");
+ const feedback=make("div","live-feedback","Todas las celdas se pueden editar. Las celdas resaltadas son las que se comprobarán. Pulsa Enter para confirmar.");
  feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
  const computed=make("div","live-computed");
  computed.setAttribute("aria-live","polite");
@@ -123,15 +123,15 @@ function spreadsheet(ex,index){
   const h=make("th","live-row-head",String(r));h.scope="row";tr.append(h);
   for(const col of columns){
    const key=col+r,editable=ex.editable.includes(key);
-   const td=make("td",editable?"live-editable":"live-readonly");
+   const td=make("td",editable?"live-editable live-target":"live-editable");
    td.dataset.cell=key;td.tabIndex=0;td.setAttribute("role","gridcell");
-   td.setAttribute("aria-label",key+(editable?", editable":", solo lectura"));
+   td.setAttribute("aria-label",key+(editable?", celda objetivo editable":", celda editable"));
    const view=make("span","live-cell-view");td.append(view);
    td.addEventListener("click",()=>select(key,true));
    td.addEventListener("keydown",ev=>{
     if(ev.target!==td)return;
     if(ev.key==="Enter"||ev.key==="F2"){ev.preventDefault();select(key,true);}
-    if(ev.key.length===1&&!ev.ctrlKey&&!ev.altKey&&editable){
+    if(ev.key.length===1&&!ev.ctrlKey&&!ev.altKey){
       ev.preventDefault();select(key,true);if(editor){editor.value=ev.key;editor.dispatchEvent(new Event("input",{bubbles:true}));}
     }
     const directions={ArrowRight:[0,1],ArrowLeft:[0,-1],ArrowDown:[1,0],ArrowUp:[-1,0]};
@@ -166,7 +166,6 @@ function spreadsheet(ex,index){
   updateViews();
  }
  function commit(raw){
-  if(!ex.editable.includes(selected))return;
   cells[selected]=String(raw).trim();
   feedback.className="live-feedback";
   feedback.textContent="Dato registrado. Puedes corregirlo o comprobar la hoja.";
@@ -175,7 +174,7 @@ function spreadsheet(ex,index){
  function select(key,open){
   if(editor){const value=editor.value;closeEditor();commit(value);}
   selected=key;updateViews();
-  if(open&&ex.editable.includes(key)){
+  if(open){
    const td=positions.get(key);
    const input=make("input","live-cell-editor");
    input.value=cells[key]||"";
@@ -208,8 +207,10 @@ function spreadsheet(ex,index){
    const actual=cellValue(cells,key);
    if(!raw){missing.push("Completa "+key);continue;}
    if(ex.mustFormula?.includes(key)&&!raw.startsWith("=")){missing.push(key+": escribe una fórmula que comience con =");continue;}
-   const correct=typeof expected==="number"?
-    typeof actual==="number"&&Math.abs(actual-expected)<1e-9:
+   const target=typeof expected==="number"&&ex.mustFormula?.includes(key)&&ex.formula?
+    cellValue({...cells,[key]:ex.formula},key):expected;
+   const correct=typeof target==="number"?
+    typeof actual==="number"&&Math.abs(actual-target)<1e-9:
     String(actual).trim().toLocaleUpperCase("es")===String(expected).trim().toLocaleUpperCase("es");
    if(!correct)missing.push(key+": revisa el valor o la fórmula");
   }
@@ -230,6 +231,7 @@ function spreadsheet(ex,index){
   Object.keys(cells).forEach(key=>delete cells[key]);
   Object.assign(cells,ex.seed);
   selected=ex.editable[0];updateViews();
+  progress[index]=false;save();showProgress();
   feedback.className="live-feedback";feedback.textContent="Hoja reiniciada. Intenta de nuevo.";
  };
  updateViews();
@@ -267,8 +269,7 @@ function assembleLesson(i){
  videoHeader.append(make("h3","","Observa cómo se hace"),make("span","","VIDEO FULL HD · OPCIONAL"));
  const video=document.createElement("video");
  video.controls=true;video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=true;video.preload="metadata";
- video.poster="../assets/videos/thumbs/"+(i===0?"topic-01":"topic-"+String(i+1).padStart(2,"0"))+".mp4";
- video.removeAttribute("poster");
+ 
  video.src="../assets/videos/"+MEDIA[i]+".mp4";
  video.setAttribute("aria-label","Video de "+NAMES[i]);
  const videoNote=make("p","study-video-note","Puedes reproducir, pausar o ampliar desde los controles del video. No es obligatorio verlo completo para practicar.");
@@ -276,7 +277,7 @@ function assembleLesson(i){
  article.append(videoPanel);
  if(parts[2])article.append(parts[2]);
  if(parts[3]){
-  const guide=make("details","study-steps");
+  const guide=make("details","study-steps");guide.open=true;
   const summary=make("summary","","Ver instrucciones del ejemplo paso a paso");
   guide.append(summary,parts[3]);
   article.append(guide);
