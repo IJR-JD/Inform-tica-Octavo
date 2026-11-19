@@ -14,6 +14,7 @@ const MEDIA=[
  "u01-multiplication","u01-division","u01-sum"
 ];
 const KEY="ijr-ti8-excel-practice-v3";
+const ANSWERS_KEY="ijr-ti8-excel-answers-v1";
 const $=id=>document.getElementById(id);
 const host=$("journeyStage"),nav=$("journeyNav"),theory=$("theoryPhase"),lab=$("practicePhase");
 if(!host||!nav||!window.IJRPedagogy||!Array.isArray(EX)||EX.length!==7)return;
@@ -27,20 +28,71 @@ try{
  const parsed=JSON.parse(localStorage.getItem(KEY)||"null");
  if(Array.isArray(parsed)&&parsed.length===7)progress=parsed.map(v=>v===true);
 }catch{}
+// Never accept isolated completions: every completed lesson must have its
+// entire prerequisite chain verified. This also repairs legacy saved progress.
+for(let i=1;i<progress.length;i++)if(!progress[i-1])progress[i]=false;
+function unlockedIndex(){const n=progress.indexOf(false);return n===-1?7:n}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(progress))}catch{}}
+function getSavedAnswers(index){
+ try{const all=JSON.parse(localStorage.getItem(ANSWERS_KEY)||"{}");
+  return all&&typeof all==="object"&&all[index]&&typeof all[index]==="object"?all[index]:null
+ }catch{return null}
+}
+function saveAnswers(index,cells){
+ try{const all=JSON.parse(localStorage.getItem(ANSWERS_KEY)||"{}");
+  all[index]={...cells};localStorage.setItem(ANSWERS_KEY,JSON.stringify(all))
+ }catch{}
+}
+function recheckAfterEdit(index){
+ if(progress[index]){
+  // Any changed solution must be verified again; downstream submissions also
+  // become pending, preventing access via a previously unlocked index.
+  for(let j=index;j<progress.length;j++)progress[j]=false;
+  save();
+  showProgress();
+ }
+}
 function showProgress(){
  const n=progress.filter(Boolean).length;
+ const frontier=unlockedIndex();
  $("percent").textContent=Math.round(100*n/7)+"%";
- $("progressLabel").textContent=n+" de 7 prácticas guiadas completadas";
+ $("progressLabel").textContent=n+" de 7 ejercicios registrados y aprobados";
  $("progressFill").style.width=(100*n/7)+"%";
  const summary=$("journeySummary");
- if(summary)summary.textContent=n===7?"✓ Las siete prácticas guiadas están completas. Puedes reforzarlas o abrir el laboratorio final.":n+" de 7 prácticas guiadas verificadas · Elige cualquier concepto y escribe directamente en sus celdas.";
+ if(summary)summary.textContent=n===7?
+ "✓ Todos los ejercicios fueron aprobados. Se habilitó el laboratorio final.":
+ "Concepto "+(frontier+1)+" de 7 · Completa y pulsa «Comprobar mi hoja» para desbloquear el siguiente.";
  nav.querySelectorAll("a[data-lesson]").forEach((a,i)=>{
-   a.classList.toggle("is-done",progress[i]);
-   const state=a.querySelector(".journey-status");
-   if(state)state.textContent=progress[i]?"✓":"↗";
+  const accessible=i<=frontier;
+  a.classList.toggle("is-done",progress[i]);
+  a.classList.toggle("is-locked",!accessible);
+  a.setAttribute("aria-disabled",String(!accessible));
+  a.tabIndex=accessible?0:-1;
+  if(accessible)a.href="#lesson-"+(i+1);else a.removeAttribute("href");
+  a.title=accessible?"Abrir concepto "+(i+1):"Completa primero el concepto "+i;
+  const state=a.querySelector(".journey-status");
+  if(state)state.textContent=progress[i]?"✓":accessible?"Ahora":"🔒";
  });
+ for(let i=0;i<7;i++){
+  const section=$("lesson-"+(i+1));
+  if(!section)continue;
+  section.hidden=i>frontier;
+  const next=section.querySelector(".study-next-link");
+  if(next){
+   const allowed=progress[i];
+   next.hidden=!allowed;
+   next.setAttribute("aria-disabled",String(!allowed));
+   next.tabIndex=allowed?0:-1;
+  }
+ }
+ const practiceButton=$("openPractice");
+ if(practiceButton){
+  practiceButton.hidden=n!==7;
+  practiceButton.disabled=n!==7;
+ }
+ if(n!==7)lab.hidden=true;
 }
+
 function cellValue(cells,k,seen=new Set()){
  const raw=String(cells[k]??"").trim();
  if(!raw)return "";
@@ -115,7 +167,7 @@ function spreadsheet(ex,index){
  computed.textContent="Los resultados se calculan a partir de las referencias escritas.";
  actions.append(check,reset);
  shell.append(head,bar,wrap,computed,actions,feedback);
- const cells={...ex.seed};
+ const cells={...ex.seed,...(getSavedAnswers(index)||{})};
  let selected=ex.editable[0],editor=null;
  const positions=new Map();
  for(let r=1;r<=6;r++){
@@ -169,7 +221,10 @@ function spreadsheet(ex,index){
   updateViews();
  }
  function commit(raw){
+  const previous=String(cells[selected]??"");
   cells[selected]=String(raw).trim();
+  if(previous!==cells[selected])recheckAfterEdit(index);
+  saveAnswers(index,cells);
   feedback.className="live-feedback";
   feedback.textContent="Dato registrado. Puedes corregirlo o comprobar la hoja.";
   updateViews();
@@ -209,7 +264,12 @@ function spreadsheet(ex,index){
    const raw=String(cells[key]||"").trim();
    const actual=cellValue(cells,key);
    if(!raw){missing.push("Completa "+key);continue;}
-   if(ex.mustFormula?.includes(key)&&!raw.startsWith("=")){missing.push(key+": escribe una fórmula que comience con =");continue;}
+   if(ex.mustFormula?.includes(key)){
+    if(!raw.startsWith("=")){missing.push(key+": debes escribir una fórmula que comience por =");continue;}
+    const canonical=raw.replace(/\s+/g,"").toUpperCase().replace(/^=SUM\(/,"=SUMA(");
+    const required=String(ex.formula||"").replace(/\s+/g,"").toUpperCase();
+    if(canonical!==required){missing.push(key+": usa las referencias y el operador solicitados ("+ex.formula+")");continue;}
+   }
    const target=typeof expected==="number"&&ex.mustFormula?.includes(key)&&ex.formula?
     cellValue({...cells,[key]:ex.formula},key):expected;
    const correct=typeof target==="number"?
@@ -222,9 +282,9 @@ function spreadsheet(ex,index){
    feedback.textContent="Revisa tu respuesta: "+missing.join(" · ")+". "+ex.hint;
    return;
   }
-  progress[index]=true;save();showProgress();
+  progress[index]=true;save();saveAnswers(index,cells);showProgress();
   feedback.className="live-feedback live-feedback-success";
-  feedback.textContent="✓ ¡Bien hecho! "+ex.worked+" Puedes seguir con el siguiente concepto.";
+  feedback.textContent="✓ Ejercicio registrado y aprobado. "+ex.worked+(index<6?" Ya puedes abrir el siguiente concepto.":" ¡Completaste los siete conceptos!");
   const next=document.getElementById("lesson-"+(index+2));
   if(next)next.querySelector(".live-sheet")?.classList.add("live-next-available");
  }
@@ -234,7 +294,8 @@ function spreadsheet(ex,index){
   Object.keys(cells).forEach(key=>delete cells[key]);
   Object.assign(cells,ex.seed);
   selected=ex.editable[0];updateViews();
-  progress[index]=false;save();showProgress();
+  for(let j=index;j<progress.length;j++)progress[j]=false;
+  save();saveAnswers(index,cells);showProgress();
   feedback.className="live-feedback";feedback.textContent="Hoja reiniciada. Intenta de nuevo.";
  };
  updateViews();
@@ -244,7 +305,14 @@ function buildNav(){
  nav.replaceChildren();
  NAMES.forEach((name,i)=>{
   const a=make("a","journey-nav-item");
-  a.href="#lesson-"+(i+1);a.dataset.lesson=String(i+1);
+  a.dataset.lesson=String(i+1);
+  a.addEventListener("click",ev=>{
+    if(i>unlockedIndex()){
+      ev.preventDefault();
+      const state=$("journeySummary");
+      if(state)state.textContent="Para continuar, comprueba primero el ejercicio "+(unlockedIndex()+1)+".";
+    }
+  });
   a.append(make("span","journey-num",String(i+1).padStart(2,"0")));
   a.append(make("span","journey-nav-text",name));
   a.append(make("span","journey-status",progress[i]?"✓":"↗"));
@@ -299,16 +367,19 @@ function assembleLesson(i){
  if(i<6){
   const continueRow=make("div","study-continue");
   const a=make("a","study-next-link","Siguiente: "+NAMES[i+1]+" →");
-  a.href="#lesson-"+(i+2);continueRow.append(a);article.append(continueRow);
+  a.href="#lesson-"+(i+2);a.hidden=true;
+  a.addEventListener("click",ev=>{if(!progress[i])ev.preventDefault()});
+  continueRow.append(a);article.append(continueRow);
  }
  return article;
 }
 buildNav();host.replaceChildren();
 for(let i=0;i<7;i++)host.append(assembleLesson(i));
 showProgress();
-$("openPractice").hidden=false;
+$("openPractice").hidden=true;
 $("openPractice").textContent="Abrir laboratorio final de 7 retos →";
 $("openPractice").onclick=()=>{
+ if(unlockedIndex()!==7)return;
  lab.hidden=false;
  if(typeof window.startPractice==="function")window.startPractice();
  lab.scrollIntoView({behavior:"smooth",block:"start"});
