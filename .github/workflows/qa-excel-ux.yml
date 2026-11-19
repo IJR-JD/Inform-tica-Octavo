@@ -32,7 +32,7 @@ jobs:
       - name: Install browser QA tools
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
       - name: Serve actual static site
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/ti8-server.log 2>&1 &
