@@ -1,62 +1,42 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Examen diagnóstico formativo para informática de grado octavo: 24 preguntas, seis competencias y rutas de refuerzo.">
-<title>Módulo 00 · Diagnóstico de competencias digitales | IJR</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Examen diagnóstico interactivo de informática de octavo: 24 preguntas, 30 minutos, una pregunta a la vez, figuras y perfil formativo por competencias.">
+<title>Examen diagnóstico · Módulo 00 | Instituto Jorge Robledo</title>
 <link rel="stylesheet" href="../styles.css">
-<link rel="stylesheet" href="diagnostico.css?v=20261119-00-v1">
+<link rel="stylesheet" href="exam-mode.css?v=ijr-exam-v2">
 </head>
 <body>
-<header class="topbar">
-<a class="brand" href="../"><span class="brand-mark">IJR</span><span><small>Instituto Jorge Robledo · Informática 8</small><strong>Learning Hub · Evaluación diagnóstica</strong></span></a>
-<div class="top-actions"><a class="button button-light" href="../">← Learning Hub</a><a class="button button-dark" href="../unidad-01-excel/">Unidad 01 · Excel</a></div>
+<header class="topbar"><a class="brand" href="../"><span class="brand-mark">IJR</span><span><small>Instituto Jorge Robledo · Informática 8.º</small><strong>Learning Hub · Examen diagnóstico</strong></span></a><div class="top-actions"><a class="button button-light" href="../">← Learning Hub</a></div></header>
+<main class="exam-shell">
+<nav class="exam-breadcrumb"><a href="../">Learning Hub</a> / Módulo 00 · Diagnóstico</nav>
+<header id="examHeader" class="exam-title-bar">
+<div><span class="exam-kicker">EXAMEN DE ENTRADA · COMPETENCIAS DIGITALES</span><h1>Diagnóstico de Informática</h1><p>24 preguntas sobre conceptos digitales, archivos, Excel, datos, lógica y seguridad. Analiza situaciones y responde directamente. El perfil se genera al entregar.</p></div>
 </header>
-<main class="diag-shell">
-<nav class="diag-breadcrumb" aria-label="Ruta de navegación"><a href="../">Learning Hub</a> / 00 · Diagnóstico de entrada</nav>
-<section class="diag-hero" aria-labelledby="diagnosticHeading">
-<div>
-<p class="diag-kicker">MÓDULO 00 · PUNTO DE PARTIDA</p>
-<h1 id="diagnosticHeading">¿Qué sabes de informática?</h1>
-<p class="diag-lead">Descubre tus conocimientos iniciales antes de comenzar los módulos. Responde situaciones de la vida diaria, analiza datos e introduce algunas referencias y fórmulas. Al terminar recibirás un perfil por competencias y recomendaciones para fortalecer tu aprendizaje.</p>
-<p class="diag-lead"><strong>No es una nota definitiva, no tiene límite de tiempo y no bloquea los módulos posteriores.</strong></p>
+<section id="examIntro" class="exam-intro" aria-label="Inicio del examen">
+<div><span class="exam-kicker">MÓDULO 00 · INSTRUCCIONES</span><h2>Un examen. Una pregunta a la vez.</h2>
+<p>Dispones de <strong id="examDuration">30 minutos</strong> para responder 24 preguntas. Cada pregunta incluye una figura o ejemplo que ayuda a interpretar la situación. Responde sin consultar otras fuentes para identificar tu punto de partida.</p>
+<ul><li>El cronómetro comienza al pulsar <strong>Iniciar examen</strong> y continúa aunque cierres o recargues la pestaña.</li><li>Puedes usar Anterior, Siguiente o la cuadrícula de preguntas para revisar y cambiar respuestas mientras quede tiempo.</li><li>Las respuestas se guardan automáticamente en este dispositivo.</li><li>Al finalizar el tiempo, el examen se entrega automáticamente. Las preguntas sin responder no suman puntos.</li><li>Las soluciones y explicaciones se muestran <strong>únicamente después de la entrega</strong>.</li></ul>
+<p>El resultado es orientativo. No es una calificación oficial ni bloquea los módulos siguientes.</p>
 </div>
-<aside class="diag-meta" aria-label="Progreso del diagnóstico">
-<span class="diag-kicker">TU AVANCE</span>
-<strong>24</strong><span>preguntas · 6 competencias</span>
-<div class="diag-track" role="presentation"><span id="answerProgress"></span></div>
-<span id="answerCount" role="status" aria-live="polite">0 / 24 preguntas respondidas</span>
-<small>El progreso se guarda únicamente en este navegador. No se envían respuestas a ningún servidor.</small>
-</aside>
+<aside><label for="examStudentCode">Código de estudiante (opcional)</label><input id="examStudentCode" type="text" maxlength="24" autocomplete="off" placeholder="G8-001" aria-describedby="examCodeHelp"><small id="examCodeHelp">Usa un código asignado, no un nombre, documento o correo. Tu perfil permanece en este navegador y puedes exportarlo.</small><button class="exam-primary" type="button" id="examStart">Iniciar examen de 30 minutos →</button></aside>
 </section>
-<section class="diag-instructions" aria-label="Instrucciones">
-<div>
-<h2>Instrucciones para el estudiante</h2>
-<ul>
-<li>Lee cada pregunta y responde sin consultar otras fuentes, para que el resultado sea útil.</li>
-<li>Cuando se solicite una referencia de Excel, escribe algo como <code>B2</code>. Cuando se solicite una fórmula, comienza por <code>=</code>.</li>
-<li>Responde con tranquilidad: puedes cambiar tus respuestas antes de generar el perfil.</li>
-<li>Puedes dejar preguntas vacías; aparecerán como no acertadas y el informe indicará cuántas respondiste.</li>
-</ul>
-<p>El resultado describe tu desempeño <strong>en estas actividades</strong>, no tus capacidades permanentes. Puedes repetirlo después de practicar.</p>
+<section id="examRunner" class="exam-runner" hidden aria-label="Examen en curso">
+<div class="exam-timer-shell" role="group" aria-label="Cronómetro y avance del examen">
+<div class="exam-clock-wrap"><div><span class="exam-timer-caption">TIEMPO RESTANTE</span><div id="examClock" class="exam-clock" role="timer" aria-label="Tiempo restante">30:00</div></div></div>
+<div class="exam-progress"><span id="examAnswered">0 de 24 respondidas</span><div class="exam-progress-track"><span id="examProgressBar"></span></div></div>
 </div>
-<div class="diag-code">
-<label for="studentCode">Código interno opcional (si el docente lo asignó)</label>
-<input id="studentCode" type="text" maxlength="24" pattern="[a-zA-Z0-9_-]*" autocomplete="off" placeholder="Ej.: G8-001" aria-describedby="codeHelp">
-<small id="codeHelp">Solo usa un código inventado o autorizado. No escribas nombre completo, documento, correo ni contraseña. El código solo aparecerá en el archivo exportado.</small>
+<p id="examLive" class="sr-only" aria-live="polite"></p>
+<div class="exam-content">
+<article id="examQuestion" class="exam-question-card" aria-label="Pregunta actual"></article>
+<section id="examReview" class="exam-review" hidden aria-label="Revisión de respuestas"></section>
+<aside class="exam-sidebar" aria-label="Navegación entre preguntas"><h3 id="examQuestionCounter">PREGUNTA 01 / 24</h3><nav id="examQuestionNav" class="exam-question-nav" aria-label="Seleccionar pregunta"></nav><p>Negro: actual · Gris: respondida · Blanco: pendiente.</p></aside>
 </div>
+<div id="examActions" class="exam-action-bar"><button id="examBack" type="button" class="exam-secondary">← Anterior</button><button id="examNext" type="button" class="exam-primary">Siguiente pregunta →</button></div>
 </section>
-<div id="diagnosticQuestions" class="diag-questions" aria-label="Preguntas diagnósticas"></div>
-<section class="diag-footer-actions" aria-label="Terminar y evaluar">
-<h2>Genera tu perfil inicial</h2>
-<p id="remainingMessage" role="status" aria-live="polite">Revisa las respuestas y genera el informe.</p>
-<div class="diag-actions"><button type="button" id="submitDiagnostic">Evaluar y generar perfil</button><button type="button" id="restartDiagnostic">Reiniciar diagnóstico</button></div>
-</section>
-<section id="diagnosticResults" class="diag-results" aria-label="Resultado y perfil por competencias" hidden></section>
-<footer class="diag-site-footer">Instituto Jorge Robledo · Informática 8 · Evaluación orientativa y formativa. No registra calificaciones oficiales.</footer>
+<section id="examResults" class="exam-results" hidden aria-label="Perfil de resultados"></section>
+<footer class="exam-privacy">Instituto Jorge Robledo · Informática 8.º · Diagnóstico formativo local. Sin calificación oficial. Las respuestas no se envían a servidores.</footer>
 </main>
-<script src="banco-preguntas.js?v=20261119-00-v1"></script>
-<script src="diagnostico.js?v=20261119-00-v1"></script>
-</body>
-</html>
+<script src="banco-preguntas.js?v=ijr-exam-v2"></script><script src="exam-mode.js?v=ijr-exam-v2"></script>
+</body></html>
