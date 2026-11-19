@@ -103,7 +103,7 @@ function cellValue(cells,k,seen=new Set()){
  if(seen.has(k))return "#CIRCULAR!";
  const ancestors=new Set(seen);ancestors.add(k);
  const formula=raw.slice(1).toUpperCase().replace(/\s+/g,"");
- const sum=/^SUMA\(([A-E][1-6]):([A-E][1-6])\)$/.exec(formula);
+ const sum=/^(?:SUMA|SUM)\(([A-E][1-6]):([A-E][1-6])\)$/.exec(formula);
  if(sum){
    const start=sum[1],end=sum[2],columns="ABCDE";
    const left=Math.min(columns.indexOf(start[0]),columns.indexOf(end[0]));
@@ -167,7 +167,15 @@ function spreadsheet(ex,index){
  computed.textContent="Los resultados se calculan a partir de las referencias escritas.";
  actions.append(check,reset);
  shell.append(head,bar,wrap,computed,actions,feedback);
- const cells={...ex.seed,...(getSavedAnswers(index)||{})};
+ // Only allow a previously saved worksheet to restore its own A1:E6 cells.
+ // This avoids extraneous imported properties being interpreted as formulas.
+ const restored=getSavedAnswers(index)||{};
+ const cells={...ex.seed};
+ for(const [ref,value] of Object.entries(restored)){
+  if(/^[A-E][1-6]$/.test(ref)&&typeof value==="string"&&value.length<=500){
+   cells[ref]=value;
+  }
+ }
  let selected=ex.editable[0],editor=null;
  const positions=new Map();
  for(let r=1;r<=6;r++){
@@ -251,12 +259,35 @@ function spreadsheet(ex,index){
   }
  }
  formula.addEventListener("input",()=>{if(editor)editor.value=formula.value;});
+ // Only save when the user actually edits the formula bar. A blur after merely
+ // inspecting a cell must never invalidate an approved exercise.
+ let formulaDirty=false,formulaReference=selected;
+ formula.addEventListener("focus",()=>{
+  formulaReference=selected;
+  formulaDirty=false;
+ });
+ formula.addEventListener("input",()=>{
+  formulaDirty=true;
+  if(editor)editor.value=formula.value;
+ });
  function formulaCommit(){
-  if(editor){const old=editor;editor=null;old.remove();}
-  commit(formula.value);
+  if(!formulaDirty)return;
+  const value=formula.value,target=formulaReference;
+  formulaDirty=false;
+  if(editor)closeEditor();
+  selected=target;
+  commit(value);
  }
- formula.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();formulaCommit();positions.get(selected)?.focus();}});
- formula.addEventListener("blur",()=>{if(document.activeElement!==formula)formulaCommit()});
+ formula.addEventListener("keydown",ev=>{
+  if(ev.key==="Enter"){
+   ev.preventDefault();formulaCommit();
+   positions.get(selected)?.focus();
+  }else if(ev.key==="Escape"){
+   ev.preventDefault();formulaDirty=false;updateViews();
+   positions.get(selected)?.focus();
+  }
+ });
+ formula.addEventListener("blur",()=>{if(formulaDirty)formulaCommit()});
  function verify(){
   if(editor){const val=editor.value;closeEditor();commit(val);}
   const missing=[];
@@ -290,7 +321,8 @@ function spreadsheet(ex,index){
  }
  check.onclick=verify;
  reset.onclick=()=>{
-  if(editor){editor.remove();editor=null}
+  if(editor)closeEditor();
+  formulaDirty=false;
   Object.keys(cells).forEach(key=>delete cells[key]);
   Object.assign(cells,ex.seed);
   selected=ex.editable[0];updateViews();
