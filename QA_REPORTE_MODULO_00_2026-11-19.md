@@ -1,88 +1,69 @@
-# QA senior — Módulo 00 · Diagnóstico de Informática 8.º
+# QA senior — Módulo 00 · Examen diagnóstico cronometrado
 
-**Institución:** Instituto Jorge Robledo
-**Fecha:** 19 de noviembre de 2026
-**Repositorio:** `IJR-JD/Inform-tica-Octavo`
-**Commit de código validado:** `f0fadb21f55a69d25901f965678b3e805c852f57`
-**Pruebas en Chromium:** [GitHub Actions, SUCCESS](https://github.com/IJR-JD/Inform-tica-Octavo/actions/runs/44599410267)
-**Publicación GitHub Pages:** [Deploy, SUCCESS](https://github.com/IJR-JD/Inform-tica-Octavo/actions/runs/44599410438)
+**Institución:** Instituto Jorge Robledo · Informática 8.º  
+**Fecha:** 19 de noviembre de 2026  
+**Repositorio:** `IJR-JD/Inform-tica-Octavo`  
+**Commit funcional auditado:** `83c39823df0a6affa16a0ebc661b36049e3757be`  
+**QA en Chromium:** https://github.com/IJR-JD/Inform-tica-Octavo/actions/runs/44601717128 — **SUCCESS**  
+**GitHub Pages:** https://github.com/IJR-JD/Inform-tica-Octavo/actions/runs/44601717161 — **SUCCESS**
 
-## Evaluación de aceptación
+## Alcance implementado
 
-**Puntuación: 10/10 en los diez criterios funcionales automatizados especificados para este módulo**. Esta puntuación no equivale a certificación integral de seguridad, ausencia absoluta de defectos, validez psicométrica, accesibilidad WCAG completa ni autorización para calificación oficial.
+- Examen de 24 preguntas, cuatro preguntas por cada una de seis competencias.
+- **30 minutos** de duración, contados desde que el estudiante inicia el examen. El cronómetro utiliza una fecha límite real persistida en `localStorage`; cerrar o recargar la pestaña no lo reinicia.
+- **Una pregunta por pantalla**, con Anterior, Siguiente, índice numerado, indicación de respondidas y revisión sin soluciones antes de entregar.
+- Entrega manual confirmada o **automática cuando vence el tiempo**; las respuestas posteriores quedan bloqueadas.
+- Mayor tipografía, controles y superficies táctiles, diseño responsive.
+- Figuras explicativas contextuales generadas mediante HTML/SVG: cuadrícula Excel, barras de datos, carpetas, navegador, flujograma y mensaje de seguridad.
+- Preguntas originales de selección única, números, referencia de celda y fórmula.
+- Perfil orientativo por seis competencias, explicaciones **solo después de entregar** y exportación JSON sin respuestas individuales.
+- Sin bloqueo de las unidades 01–04 por resultado del diagnóstico.
 
-| Criterio | Resultado |
-| --- | ---: |
-| Carga, navegación y acceso desde Learning Hub | 1/1 |
-| Cobertura de seis dominios / 24 preguntas | 1/1 |
-| Interacción de opción múltiple, texto, referencia y fórmula | 1/1 |
-| Cálculo de puntuación global 0–24 | 1/1 |
-| Desglose de competencia de 0–4 | 1/1 |
-| Tres niveles orientativos y recomendaciones | 1/1 |
-| Respuestas incompletas, corrección y reevaluación | 1/1 |
-| Persistencia y retoma después de recargar | 1/1 |
-| Exportación agregada y minimización de datos personales | 1/1 |
-| Interfaz móvil, semántica de preguntas, estabilidad y despliegue | 1/1 |
-| **Total** | **10/10** |
+## Verificación automatizada
 
-## Resultado técnico
+| Suite | Comprobaciones |
+|---|---:|
+| Examen diagnóstico 00 (temporizador, revisión, perfil, exportación, móvil) | 50/50 |
+| Excel Unidad 01 — recorrido secuencial | 98/98 |
+| Excel Unidad 01 — casos límite | 20/20 |
+| Excel módulos 02–04 — operación y navegación | 118/118 |
+| **Total** | **286/286** |
 
-- **44 verificaciones PASS para el módulo diagnóstico**, mediante `tests/diagnostic-qa.mjs`.
-- **236 verificaciones PASS de regresión** para módulos 01–04, mediante `tests/excel-ux-qa.mjs`, `tests/excel-edge-qa.mjs` y `tests/excel-modules-qa.mjs`.
-- **Total: 280 verificaciones satisfactorias** y cero excepciones JavaScript no controladas en las rutas ensayadas.
-- QA de navegador y GitHub Pages: **SUCCESS para el mismo commit**.
+**Calificación de aceptación funcional automatizada: 10/10** sobre los siguientes criterios acotados:
 
-## Dominios evaluados
+1. Inicio controlado de examen.
+2. Un único ítem visible y navegación completa.
+3. Tipografía, tamaños táctiles y diagramas en seis dominios.
+4. Temporizador real de 30 minutos persistente.
+5. Retención local de respuestas y recarga sin reinicio del tiempo.
+6. Revisión previa con ocultación de respuestas correctas.
+7. Calificación exacta con respuestas incompletas.
+8. Cierre automático al expirar y bloqueo de edición.
+9. Desglose del perfil, explicaciones postentrega y exportación agregada.
+10. Compatibilidad móvil comprobada a 375 px, sin excepciones JS en recorridos cubiertos.
 
-Seis competencias, cuatro ítems por competencia:
+### Casos de navegador verificados
 
-1. Entorno digital y navegación.
-2. Archivos y organización.
-3. Hojas de cálculo (celdas, referencias, fórmula, cálculo).
-4. Interpretación de datos (tabla, máximo, suma y promedio).
-5. Pensamiento computacional (secuencias, patrones, condiciones y bucles).
-6. Seguridad y ciudadanía digital.
+- El reloj comienza cuando se pulsa *Iniciar*, con fecha límite de 1 800 000 ms.
+- Se conserva la respuesta al cambiar de pregunta y al recargar la página.
+- Los gráficos, cuadrícula, carpetas, flujograma y avisos de seguridad se renderizan.
+- El examen con 12 respuestas correctas produce 12/24; el examen con las 24 correctas produce 24/24.
+- No se muestra la clave durante el examen ni durante la revisión.
+- Tras la entrega el examen deja de ser editable y el resultado se recupera al recargar.
+- El informe JSON omite respuestas individuales y contiene el desglose de seis competencias.
+- Una fecha límite vencida produce la entrega automática al abrir o actualizar la sesión; se contabilizan solo las respuestas guardadas.
+- Los 236 tests de regresión de los módulos 01–04 también aprobaron.
 
-Los ítems se diseñaron como evaluación exploratoria no estandarizada. El desempeño de solo cuatro preguntas por competencia debe interpretarse como **señal provisional para orientar apoyos**, no como medición exhaustiva o clasificación de capacidades.
+## Límites importantes
 
-### Interpretación local, no clínica ni permanente
+**No es un examen de alta seguridad.** La fecha límite, el banco de respuestas y el perfil están disponibles en el dispositivo; `localStorage` es manipulable por una persona con conocimientos técnicos. No se debe usar como evaluación sumativa oficial sin autenticación, almacenamiento protegido y validación de tiempo y puntuación del lado servidor.
 
-Por dominio (4 preguntas):
-- 0–1: **Requiere acompañamiento**.
-- 2: **En desarrollo**.
-- 3–4: **Fortaleza inicial**.
+Los gráficos y figuras se han creado como **ilustraciones educativas de situaciones reales**, no como capturas verificadas de equipos o plataformas. No se hizo una auditoría psicométrica, WCAG 2.2 completa, ni pruebas exhaustivas de Safari/Firefox o equipos físicos. La puntuación 10/10 se refiere exclusivamente a las pruebas funcionales automatizadas incluidas en la ejecución citada.
 
-Globalmente:
-- 0–11: **Punto de partida: refuerzo guiado**.
-- 12–18: **Competencias en consolidación**.
-- 19–24: **Aplicación relativamente autónoma**.
+## Archivos principales
 
-Los umbrales son **criterios pedagógicos orientativos** elegidos para guiar ejercicios; no están calibrados estadísticamente ni deben usarse para selección, sanciones o decisiones de alto impacto.
-
-## Flujos funcionales ejecutados
-
-- Un cuestionario vacío calcula 0/24 e indica que las preguntas sin responder cuentan como no acertadas.
-- Un estudiante que acierta exactamente 12 preguntas obtiene 12/24 y un desglose independiente por dominio.
-- Con las 24 claves correctas se obtiene 24/24; se verificó la posibilidad de acertar todos los ítems.
-- La fórmula conmutativa `=C2*B2` se acepta, además de `=B2*C2`.
-- Una respuesta numérica mal formateada se rechaza y puede corregirse sin reiniciar todo.
-- Las ediciones invalidan los informes anteriores para evitar presentar datos desactualizados.
-- Las respuestas y el último perfil se recuperan al recargar el navegador.
-- La exportación JSON contiene agregado global, seis resultados por dominio y un código opcional; no exporta respuestas individuales.
-- El reinicio solicita confirmación y elimina el resultado y las respuestas locales de la sesión.
-- En Chromium a 375 px no se observó desbordamiento horizontal del documento.
-- Todas las preguntas incluyen leyenda semántica y el progreso anuncia los cambios.
-- Se comprobaron portada y acceso independiente al módulo 01.
-- Una cancelación `net::ERR_ABORTED` de MP4 al abandonar una página con preloading es un comportamiento normal del navegador. Se ajustó la prueba QA para no confundirlo con un archivo inexistente.
-
-## Protección de menores e integridad académica
-
-- El sitio **no recoge nombres completos, correos ni documentos**. Admite un identificador interno opcional autorizado por el docente.
-- Las respuestas y el informe se almacenan en `localStorage`, sin enviarse a Supabase.
-- El informe JSON se descarga mediante una acción voluntaria del estudiante.
-- `localStorage` y la clave de respuestas contenida en el JavaScript del sitio público pueden manipularse: **no es un examen seguro ni una calificación oficial antifraude**.
-- Para perfilar cada estudiante a nivel institucional de forma fiable se requiere autenticación, tratamiento de datos adecuado para menores, consentimiento/aviso institucional donde corresponda, banco protegido y evaluación/almacenamiento del lado servidor.
-
-## Riesgos fuera de alcance
-
-No se realizó una calibración psicométrica de ítems, auditoría WCAG 2.2 completa, lectura con todas las tecnologías asistivas, prueba multibrowser (Firefox/Safari), prueba de carga ni auditoría de almacenamiento institucional. La nota QA reportada corresponde **únicamente a los criterios funcionales automatizados definidos**.
+- `unidad-00-diagnostico/index.html`
+- `unidad-00-diagnostico/exam-mode.js`
+- `unidad-00-diagnostico/exam-mode.css`
+- `unidad-00-diagnostico/banco-preguntas.js`
+- `tests/diagnostic-qa.mjs`
