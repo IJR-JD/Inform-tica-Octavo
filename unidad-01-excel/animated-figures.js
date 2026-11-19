@@ -54,43 +54,133 @@ function captions(type){
  };return c[type]||c.cell;
 }
 function render(type,root){
- token++;const generation=token;if(timer!==null){clearTimeout(timer);timer=null}
- root.replaceChildren();
- const visual=diagram(type);if(!visual)return;
- const wrapper=document.createElement("div");wrapper.className="motion-stage";wrapper.innerHTML=visual.svg;
- const description=document.createElement("div");description.className="motion-explanation";description.setAttribute("role","status");description.setAttribute("aria-live","polite");
- const controls=document.createElement("div");controls.className="motion-controls";
- const back=document.createElement("button");back.type="button";back.textContent="← Anterior";
- const play=document.createElement("button");play.type="button";play.className="motion-primary";play.textContent="▶ Reproducir";
- const forward=document.createElement("button");forward.type="button";forward.textContent="Siguiente →";
- const count=document.createElement("span");count.className="motion-count";
- controls.append(back,play,forward,count);root.append(wrapper,controls,description);
- const texts=captions(type);let step=0,isPlaying=false;
- const svg=wrapper.querySelector("svg");
- const reduceMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
- function toggle(id,yes){const e=svg.querySelector("#"+id);if(e)e.classList.toggle("visible",yes)}
- function paint(n){step=Math.max(0,Math.min(texts.length-1,n));
-   // reset and reconstruct visible stages, so stepping backward is deterministic.
-   ["anim-column","anim-row","anim-target","anim-arrow","anim-pointer","anim-formula","anim-result",...visual.data.values.map((_,i)=>"value-"+i)].forEach(x=>toggle(x,false));
-   if(type==="cell"){toggle("anim-column",step>=0);toggle("anim-row",step>=1);toggle("anim-target",step>=2);toggle("anim-pointer",step>=3);toggle("anim-arrow",step>=3);toggle("anim-formula",step>=2);toggle("anim-result",step>=3)}
-   else{toggle("anim-column",step>=0);toggle("anim-row",step>=1);toggle("anim-target",step>=2);
-     visual.data.values.forEach((_,i)=>toggle("value-"+i,step>=Math.min(3,i+1)));
-     toggle("anim-pointer",step>=3);toggle("anim-arrow",step>=3);toggle("anim-formula",step>=2);toggle("anim-result",step>=3)}
-   description.innerHTML="<strong>Paso "+(step+1)+" de "+texts.length+".</strong> "+texts[step];
-   count.textContent=(step+1)+" / "+texts.length;
-   back.disabled=step===0;forward.disabled=step===texts.length-1;
-   play.textContent=isPlaying?"❚❚ Pausar":step===texts.length-1?"↻ Repetir":"▶ Reproducir";
- }
- function schedule(){if(!isPlaying)return;if(step>=texts.length-1){isPlaying=false;paint(step);return}
-   timer=setTimeout(()=>{if(generation!==token)return;timer=null;paint(step+1);schedule()},2200)}
- function stop(){isPlaying=false;if(timer!==null){clearTimeout(timer);timer=null}}
- back.onclick=()=>{stop();paint(step-1)};
- forward.onclick=()=>{stop();paint(step+1)};
- play.onclick=()=>{if(isPlaying){stop();paint(step)}else{if(step===texts.length-1)step=0;isPlaying=true;paint(step);schedule()}};
- paint(0);
- // Autoplay each lesson to show the instructional procedure immediately.
- // Reduced-motion settings keep the diagram in its fully explained state.
- if(reduceMotion){paint(texts.length-1)}else{isPlaying=true;paint(0);schedule()}
+  token++;
+  const generation=token;
+  if(timer!==null){clearTimeout(timer);timer=null}
+  root.replaceChildren();
+  const visual=diagram(type);
+  if(!visual)return;
+  const wrapper=document.createElement("div");
+  wrapper.className="motion-stage";
+  wrapper.innerHTML=visual.svg;
+  const description=document.createElement("div");
+  description.className="motion-explanation";
+  description.setAttribute("role","status");
+  description.setAttribute("aria-live","off");
+  const controls=document.createElement("div");
+  controls.className="motion-controls";
+  const back=document.createElement("button");back.type="button";back.textContent="← Anterior";
+  const play=document.createElement("button");play.type="button";play.className="motion-primary";play.textContent="❚❚ Pausar";
+  const forward=document.createElement("button");forward.type="button";forward.textContent="Siguiente →";
+  const expand=document.createElement("button");expand.type="button";expand.className="motion-expand";expand.textContent="⛶ Ampliar explicación";
+  const count=document.createElement("span");count.className="motion-count";
+  controls.append(back,play,forward,expand,count);
+  root.append(wrapper,controls,description);
+  const texts=captions(type);
+  const reduceMotion=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const svg=wrapper.querySelector("svg");
+  let step=0,isPlaying=!reduceMotion,expanded=false;
+  function toggle(id,yes){const e=svg.querySelector("#"+id);if(e)e.classList.toggle("visible",yes)}
+  function paint(n){
+    step=Math.max(0,Math.min(texts.length-1,n));
+    ["anim-column","anim-row","anim-target","anim-arrow","anim-pointer","anim-formula","anim-result",...visual.data.values.map((_,i)=>"value-"+i)].forEach(x=>toggle(x,false));
+    if(type==="cell"){
+      toggle("anim-column",step>=0);toggle("anim-row",step>=1);toggle("anim-target",step>=2);
+      toggle("anim-pointer",step>=3);toggle("anim-arrow",step>=3);
+      toggle("anim-formula",step>=2);toggle("anim-result",step>=3);
+    }else{
+      toggle("anim-column",step>=0);toggle("anim-row",step>=1);toggle("anim-target",step>=2);
+      visual.data.values.forEach((_,i)=>toggle("value-"+i,step>=Math.min(3,i+1)));
+      toggle("anim-pointer",step>=3);toggle("anim-arrow",step>=3);
+      toggle("anim-formula",step>=2);toggle("anim-result",step>=3);
+    }
+    description.replaceChildren();
+    const strong=document.createElement("strong");
+    strong.textContent="Paso "+(step+1)+" de "+texts.length+". ";
+    description.append(strong,document.createTextNode(texts[step]));
+    count.textContent=(step+1)+" / "+texts.length+" · LOOP";
+    back.disabled=step===0;forward.disabled=step===texts.length-1;
+    play.textContent=isPlaying?"❚❚ Pausar":"▶ Reproducir";
+  }
+  function stop(){
+    isPlaying=false;
+    if(timer!==null){clearTimeout(timer);timer=null}
+  }
+  function schedule(){
+    if(!isPlaying||generation!==token||expanded)return;
+    // Hold the final result for comprehension, then restart like a looping GIF.
+    const wait=step===texts.length-1?2600:2400;
+    timer=setTimeout(()=>{
+      if(generation!==token||expanded||!isPlaying)return;
+      timer=null;
+      paint(step===texts.length-1?0:step+1);
+      schedule();
+    },wait);
+  }
+  back.onclick=()=>{stop();paint(step-1)};
+  forward.onclick=()=>{stop();paint(step+1)};
+  play.onclick=()=>{
+    if(isPlaying){stop();paint(step)}
+    else{isPlaying=true;paint(step);schedule()}
+  };
+  expand.onclick=()=>{
+    expanded=true;
+    if(timer!==null){clearTimeout(timer);timer=null}
+    const dialog=document.getElementById("figureDialog");
+    const target=document.getElementById("figureDialogBody");
+    const title=document.getElementById("figureDialogTitle");
+    if(!dialog||!target||!title){expanded=false;if(isPlaying)schedule();return}
+    title.textContent="Demostración ampliada · "+(document.getElementById("stepTitle")?.textContent||"Excel");
+    // The large figure has its own playback so the inline and enlarged views
+    // never compete for timers or DOM targets.
+    target.replaceChildren();
+    const large=diagram(type);
+    const bigStage=document.createElement("div");
+    bigStage.className="motion-stage";
+    bigStage.innerHTML=large.svg;
+    const bigDescription=document.createElement("p");
+    bigDescription.className="motion-fullscreen-caption";
+    bigDescription.setAttribute("aria-live","off");
+    target.append(bigStage,bigDescription);
+    const bigSvg=bigStage.querySelector("svg");
+    let bigStep=0,bigTimer=null,active=true;
+    const bigPaint=n=>{
+      bigStep=n;
+      const ids=["anim-column","anim-row","anim-target","anim-arrow","anim-pointer","anim-formula","anim-result",...large.data.values.map((_,i)=>"value-"+i)];
+      ids.forEach(id=>bigSvg.querySelector("#"+id)?.classList.remove("visible"));
+      const on=id=>bigSvg.querySelector("#"+id)?.classList.add("visible");
+      if(type==="cell"){
+        if(n>=0)on("anim-column");if(n>=1)on("anim-row");if(n>=2){on("anim-target");on("anim-formula")}
+        if(n>=3){on("anim-pointer");on("anim-arrow");on("anim-result")}
+      }else{
+        on("anim-column");if(n>=1)on("anim-row");
+        if(n>=2){on("anim-target");on("anim-formula")}
+        large.data.values.forEach((_,i)=>{if(n>=Math.min(3,i+1))on("value-"+i)});
+        if(n>=3){on("anim-pointer");on("anim-arrow");on("anim-result")}
+      }
+      bigDescription.textContent="Paso "+(n+1)+" / "+texts.length+" · "+texts[n];
+    };
+    const tick=()=>{
+      if(!active)return;
+      bigTimer=setTimeout(()=>{if(!active)return;bigStep=(bigStep+1)%texts.length;bigPaint(bigStep);tick()},bigStep===texts.length-1?2600:2400);
+    };
+    const cleanup=()=>{
+      active=false;
+      if(bigTimer!==null)clearTimeout(bigTimer);
+      dialog.removeEventListener("close",cleanup);
+      target.replaceChildren();
+      expanded=false;
+      // Resume the inline infinite loop when the large view is closed.
+      if(generation===token&&isPlaying)schedule();
+    };
+    dialog.addEventListener("close",cleanup);
+    bigPaint(reduceMotion?texts.length-1:0);
+    if(!reduceMotion)tick();
+    if(typeof dialog.showModal==="function")dialog.showModal();
+    else{dialog.setAttribute("open","");dialog.focus()}
+  };
+  paint(reduceMotion?texts.length-1:0);
+  if(isPlaying)schedule();
 }
 window.AnimatedExcelFigures={render,source:"unidad-01-excel/animated-figures.js"};
 })();
