@@ -13,7 +13,7 @@ permissions:
 jobs:
   real-browser:
     name: 7 Excel lessons, working cells and mobile
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
