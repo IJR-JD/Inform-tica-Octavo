@@ -6,6 +6,7 @@ on:
       - 'unidad-01-excel/**'
       - 'pedagogia-modulos.js'
       - 'tests/excel-ux-qa.mjs'
+      - 'tests/excel-edge-qa.mjs'
       - '.github/workflows/qa-excel-ux.yml'
   workflow_dispatch:
 permissions:
@@ -38,4 +39,6 @@ jobs:
           cat /tmp/ti8-server.log
           exit 1
       - name: Verify user behavior in headless Chromium
-        run: node tests/excel-ux-qa.mjs
+        run: |
+          node tests/excel-ux-qa.mjs
+          node tests/excel-edge-qa.mjs
