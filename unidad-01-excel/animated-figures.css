@@ -19,3 +19,14 @@ body{font-size:18px;line-height:1.7}
 .button{font-size:.9rem}
 @media(max-width:1050px){.guided-layout{grid-template-columns:1fr}}
 @media(max-width:700px){html{font-size:16px}.guided-shell{padding:18px 13px 60px}.guided-card{padding:19px}.figure-stage{padding:12px}.motion-stage{padding:8px}.motion-controls{gap:5px}.motion-controls button{padding:8px 10px}.motion-explanation{font-size:.98rem}}
+
+
+/* Actual Claude GIFs: visually prominent, naturally looping, with original artwork intact. */
+.claude-gif-media{margin:14px 0 20px;padding:12px;border:1px solid #dedede;background:#fff;border-radius:12px}
+.claude-gif-media a{display:block;cursor:zoom-in;overflow:hidden;border-radius:8px}
+.claude-gif-media img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#f7f7f5}
+.claude-gif-caption{margin:10px 0 0!important;font-size:.78rem!important;line-height:1.5!important;font-weight:800;color:#444!important;letter-spacing:.055em}
+.svg-guide-details{border-top:1px solid #dedede;padding-top:13px;margin-top:8px}
+.svg-guide-details summary{cursor:pointer;font-size:.95rem;font-weight:750;padding:9px 2px;color:#111}
+.svg-guide-details[open] summary{margin-bottom:12px}
+.svg-guide-details:focus-within{outline-offset:3px}
