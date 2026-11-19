@@ -4,16 +4,23 @@ on:
     branches: [main]
     paths:
       - 'unidad-01-excel/**'
+      - 'unidad-02-excel/**'
+      - 'unidad-03-excel/**'
+      - 'unidad-04-excel/**'
+      - 'excel-modules-*.js'
+      - 'excel-modules.css'
       - 'pedagogia-modulos.js'
       - 'tests/excel-ux-qa.mjs'
       - 'tests/excel-edge-qa.mjs'
+      - 'tests/excel-modules-qa.mjs'
+      - 'index.html'
       - '.github/workflows/qa-excel-ux.yml'
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   real-browser:
-    name: 7 Excel lessons, working cells and mobile
+    name: Excel modules 01–04 · editable cells and mobile
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -42,3 +49,4 @@ jobs:
         run: |
           node tests/excel-ux-qa.mjs
           node tests/excel-edge-qa.mjs
+          node tests/excel-modules-qa.mjs
