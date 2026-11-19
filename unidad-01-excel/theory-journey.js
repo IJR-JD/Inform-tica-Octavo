@@ -1,221 +1,316 @@
-/* IJR Informática 8 · Secuencia didáctica por descubrimiento.
-   La teoría se completa antes de habilitar los ejercicios prácticos.
-   Videos Full HD originales, sin reprocesamiento. */
+/* IJR Informática 8 · QA revision: learn by doing, no artificial video gates.
+ * Seven readable explanations, seven real editable mini-spreadsheets,
+ * non-blocking Full HD videos, single-check validation, optional final lab.
+ * Does not modify the final lab's validation engine or any MP4 assets.
+ */
 (()=>{
 "use strict";
-const LESSONS=[
- {name:"La hoja de cálculo y sus celdas",video:"topic-01",question:"¿Qué representa la referencia B2?",answers:["Columna B, fila 2","Fila B, columna 2","Dos hojas de cálculo"],correct:0,why:"Una referencia combina primero la letra de columna y después el número de fila."},
- {name:"Texto, números y formatos",video:"u01-data",question:"¿Qué valor puede utilizarse directamente en una operación?",answers:["La etiqueta «Cuaderno»","La cantidad 4","El encabezado «Producto»"],correct:1,why:"Los números participan en cálculos; el texto describe los productos."},
- {name:"Sumar usando referencias",video:"u01-addition",question:"Si B2 vale 8 y B3 vale 5, ¿qué fórmula devuelve 13?",answers:["=B2+B3","=B2-B3","B2+B3"],correct:0,why:"El signo = inicia la fórmula y + suma los valores de ambas celdas."},
- {name:"Resta e inventarios",video:"u01-subtraction",question:"Con 20 unidades iniciales y 7 vendidas, ¿qué fórmula calcula 13 disponibles?",answers:["=B3-B2","=B2-B3","=B2+B3"],correct:1,why:"Restamos las unidades vendidas del inventario inicial, en ese orden."},
- {name:"Multiplicación y subtotales",video:"u01-multiplication",question:"Para multiplicar cantidad B2 por precio C2, escribe:",answers:["=B2xC2","=B2+C2","=B2*C2"],correct:2,why:"Excel utiliza el asterisco (*) como operador de multiplicación."},
- {name:"División y costos unitarios",video:"u01-division",question:"¿Qué fórmula obtiene el costo por unidad si B2 es el costo total y C2 la cantidad?",answers:["=B2/C2","=C2/B2","=B2*C2"],correct:0,why:"Costo unitario = costo total dividido entre número de unidades."},
- {name:"Función SUMA y rangos",video:"u01-sum",question:"¿Qué fórmula agrega los valores de B2, B3 y B4?",answers:["=SUMA(B2:B4)","=SUMA(B2;B4)","=SUMA(B2-B4)"],correct:0,why:"El rango B2:B4 incluye todas las celdas entre ambos extremos."}
+const NAMES=[
+ "Celdas y referencias","Tipos de datos","Suma con referencias",
+ "Resta e inventarios","Multiplicación","División","Función SUMA"
 ];
-const KEY="ijr-ti8-excel-theory-v2";
-const storageRead=()=>{try{return Math.max(0,Math.min(LESSONS.length,parseInt(localStorage.getItem(KEY)||"0",10)||0))}catch{return 0}};
-const storageWrite=v=>{try{localStorage.setItem(KEY,String(v))}catch{}};
+const MEDIA=[
+ "topic-01","u01-data","u01-addition","u01-subtraction",
+ "u01-multiplication","u01-division","u01-sum"
+];
+const KEY="ijr-ti8-excel-practice-v3";
 const $=id=>document.getElementById(id);
-const e=(tag,cls,content)=>{const element=document.createElement(tag);if(cls)element.className=cls;if(content!==undefined)element.textContent=content;return element};
-let unlocked=storageRead(),active=Math.min(unlocked,LESSONS.length-1),stage=0,watched=false,stepIndex=0,lessonSections=[],video=null,videoTimeHandler=null,dialogHandler=null;
-const theory=$("theoryPhase"),practice=$("practicePhase"),nav=$("journeyNav"),stageRoot=$("journeyStage");
-if(!theory||!practice||!nav||!stageRoot||!window.IJRPedagogy)return;
-const total=LESSONS.length;
-const stages=["Comprende","Observa el video","Resuelve el ejemplo","Comprueba"];
-const summary=$("journeySummary"),percent=$("percent"),progressLabel=$("progressLabel"),progressFill=$("progressFill");
-function renderProgress(){
- const n=unlocked;
- summary.textContent=n===total?"Teoría completada. Continúa con el laboratorio.":"Etapa "+(Math.min(active+1,total))+" de "+total+" · "+stages[stage];
- percent.textContent=Math.round(100*n/total)+"%";
- progressLabel.textContent=n+" de "+total+" conceptos estudiados";
- progressFill.style.width=(100*n/total)+"%";
-}
-function progressButtons(){
- nav.replaceChildren();
- LESSONS.forEach((item,i)=>{
-  const b=e("button","journey-nav-item",""),done=i<unlocked;
-  b.type="button";b.disabled=i>unlocked;b.classList.toggle("is-current",i===active);b.classList.toggle("is-done",done);
-  b.innerHTML='<span class="journey-num">'+String(i+1).padStart(2,"0")+'</span><span class="journey-nav-text"></span><span class="journey-status"></span>';
-  b.querySelector(".journey-nav-text").textContent=item.name;
-  b.querySelector(".journey-status").textContent=done?"✓":i===active?"Ahora":"·";
-  b.onclick=()=>showLesson(i);
-  nav.append(b);
- });
-}
-function cleanup(){
- if(video){
-  video.pause();
-  video.removeAttribute("src");
-  video.load();
-  video=null;
- }
- if(dialogHandler){
-  const dialog=$("figureDialog");dialog.removeEventListener("close",dialogHandler);
-  dialogHandler=null;
- }
-}
-function renderHeader(){
- const h=e("div","journey-heading");
- h.append(e("p","journey-overline","TEORÍA GUIADA · CONCEPTO "+String(active+1).padStart(2,"0")+" / "+total),e("h2","",LESSONS[active].name));
- h.append(e("p","journey-lead","Primero comprende, observa y resuelve cada ejemplo. La hoja de práctica se habilita después de completar las siete explicaciones."));
- stageRoot.append(h);
- const bar=e("div","journey-stage-bar");
- stages.forEach((title,i)=>{
-  const pill=e("span","journey-stage-pill",String(i+1).padStart(2,"0")+" · "+title);
-  pill.classList.toggle("is-current",stage===i);
-  pill.classList.toggle("is-past",stage>i);
-  bar.append(pill);
- });
- stageRoot.append(bar);
-}
-function navFooter(label,cb,disabled=false){
- const box=e("div","journey-action-row");
- const aside=e("small","journey-action-hint",stage===1?"La reproducción se registra al alcanzar al menos el 85 % del video.":"Lee y completa cada parte en el orden propuesto.");
- const button=e("button","journey-next",label);
- button.type="button";button.disabled=disabled;button.onclick=cb;
- box.append(aside,button);stageRoot.append(box);
- return {button,aside};
-}
-function extractLesson(){
- const temporary=e("div");
- window.IJRPedagogy.renderUnit1(active,temporary);
- return [...temporary.children];
-}
-function showLesson(i){
- if(i>unlocked)return;
- cleanup();active=i;stage=0;watched=false;stepIndex=0;
- render();
-}
-function nextStage(){stage=Math.min(3,stage+1);render()}
-function renderIntro(){
- const container=e("div","journey-intro-grid");
- const intro=e("div","journey-extract");
- intro.append(lessonSections[0],lessonSections[1]);
- container.append(intro);
- const note=e("aside","journey-context");
- note.append(e("p","journey-overline","ANTES DEL VIDEO"),e("h3","","Objetivo de aprendizaje"),e("p","","Identifica los conceptos principales de esta etapa. En el siguiente paso observarás cómo se aplican en una situación cotidiana."));
- const btn=e("button","journey-text-link","Releer la explicación");
- btn.type="button";btn.onclick=()=>intro.scrollIntoView({block:"start",behavior:"smooth"});
- note.append(btn);container.append(note);
- stageRoot.append(container);
- navFooter("He comprendido · Ver demostración →",nextStage);
-}
-function watchVideo(){
- const panel=e("section","journey-video-panel");
- const videoBlock=e("div","journey-video-block");
- const v=document.createElement("video");
- video=v;v.controls=true;v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.preload="metadata";
- v.src="../assets/videos/"+LESSONS[active].video+".mp4";
- v.setAttribute("aria-label","Demostración Full HD de "+LESSONS[active].name);
- videoBlock.append(v);
- const tools=e("div","journey-video-tools");
- const status=e("span","journey-watch-status","● Video pendiente de observación");
- const expand=e("button","journey-expand","⛶ Ver video ampliado");expand.type="button";
- tools.append(status,expand);videoBlock.append(tools);
- const context=e("div","journey-example");context.append(lessonSections[2]);
- panel.append(videoBlock,context);
- stageRoot.append(panel);
- const foot=navFooter("Video observado · Resolver ejemplo →",nextStage,true);
- function watchedEnough(){
-   if(!v.duration||!Number.isFinite(v.duration))return;
-   if(v.currentTime/v.duration>=.85 && !watched){
-      watched=true;status.textContent="✓ Demostración observada";foot.button.disabled=false;
-   }
- }
- videoTimeHandler=watchedEnough;
- v.addEventListener("timeupdate",videoTimeHandler);
- v.addEventListener("ended",()=>{watched=true;status.textContent="✓ Demostración observada";foot.button.disabled=false},{once:true});
- const dlg=$("figureDialog");
- const openBig=()=>{
-   if(dlg.open)return;
-   const body=$("figureDialogBody");body.replaceChildren();
-   const big=document.createElement("video");big.className="excel-fullhd-video excel-fullhd-large";
-   big.controls=true;big.muted=true;big.loop=true;big.playsInline=true;big.autoplay=true;
-   big.src=v.src;big.currentTime=v.currentTime;
-   big.addEventListener("timeupdate",()=>{if(big.duration&&big.currentTime/big.duration>=.85){watched=true;status.textContent="✓ Demostración observada";foot.button.disabled=false}});
-   body.append(big);
-   $("figureDialogTitle").textContent=LESSONS[active].name+" · Full HD";
-   v.pause();dlg.showModal();big.play().catch(()=>{});
-   dialogHandler=()=>{big.pause();v.currentTime=big.currentTime;body.replaceChildren();dialogHandler=null;v.play().catch(()=>{})};
-   dlg.addEventListener("close",dialogHandler,{once:true});
- };
- expand.onclick=openBig;
- v.play().catch(()=>{});
-}
-function guidedSteps(){
- const p=lessonSections[3];const list=p.querySelector("ol");
- stageRoot.append(p);
- const steps=list?[...list.children]:[];
- steps.forEach((li,i)=>{li.hidden=i>stepIndex;li.classList.toggle("is-guided-active",i===stepIndex)});
- const answer=e("div","journey-step-feedback");
- const paragraph=e("p","",stepIndex<steps.length-1?"Realiza o interpreta esta instrucción antes de revelar la siguiente.":"Has llegado al último paso. Comprueba que puedes explicar el resultado.");
- answer.append(paragraph);
- stageRoot.append(answer);
- navFooter(stepIndex<steps.length-1?"Entendido · Siguiente paso →":"Pasos revisados · Comprobar →",()=>{
-   if(stepIndex<steps.length-1){stepIndex++;render()}
-   else nextStage();
- });
-}
-function knowledgeCheck(){
- stageRoot.append(lessonSections[4]);
- const item=LESSONS[active];
- const section=e("section","journey-check");
- section.append(e("p","journey-overline","PREGUNTA DE COMPRENSIÓN"),e("h3","",item.question));
- const form=e("form","journey-choices");
- const result=e("p","journey-result","Selecciona una respuesta para continuar.");result.setAttribute("role","status");result.setAttribute("aria-live","polite");
- const next=e("button","journey-next",active===total-1?"Terminar teoría · Abrir laboratorio →":"Continuar al siguiente concepto →");next.type="button";next.disabled=true;
- item.answers.forEach((answer,i)=>{
-  const label=e("label","journey-answer");
-  const input=e("input");input.type="radio";input.name="knowledge";input.value=String(i);
-  label.append(input,e("span","",answer));form.append(label);
- });
- const check=e("button","journey-check-button","Comprobar respuesta");check.type="submit";
- form.append(check);
- form.onsubmit=ev=>{
-  ev.preventDefault();
-  const selected=form.querySelector('input[name="knowledge"]:checked');
-  if(!selected){result.textContent="Elige una de las opciones antes de comprobar.";return}
-  const correct=Number(selected.value)===item.correct;
-  result.className="journey-result "+(correct?"is-ok":"is-error");
-  result.textContent=correct?"✓ Correcto. "+item.why:"Revisa la explicación y prueba nuevamente.";
-  next.disabled=!correct;
- };
- next.onclick=()=>{
-  unlocked=Math.max(unlocked,active+1);storageWrite(unlocked);
-  if(unlocked>=total){completeTheory();}
-  else{active=active+1;stage=0;stepIndex=0;watched=false;render();}
- };
- section.append(form,result,next);
- stageRoot.append(section);
-}
-function render(){
- cleanup();
- stageRoot.replaceChildren();
- lessonSections=extractLesson();renderHeader();
- if(stage===0)renderIntro();
- else if(stage===1)watchVideo();
- else if(stage===2)guidedSteps();
- else knowledgeCheck();
- progressButtons();renderProgress();
-}
-function completeTheory(){
- cleanup();
- unlocked=total;storageWrite(unlocked);
- theory.hidden=true;practice.hidden=false;
- $("practiceIntro").textContent="Teoría completada. Ahora resuelve los siete retos prácticos utilizando referencias y fórmulas reales.";
- $("openPractice").hidden=true;
- $("percent").textContent="100%";
- $("progressLabel").textContent="Teoría completada · 7 de 7";
- $("progressFill").style.width="100%";
- if(typeof window.startPractice==='function')window.startPractice();
- practice.scrollIntoView({block:"start",behavior:"smooth"});
-}
-$("openPractice").onclick=()=>completeTheory();
-$("restartTheory").onclick=()=>{
- practice.hidden=true;theory.hidden=false;
- active=0;stage=0;stepIndex=0;watched=false;
- render();
- theory.scrollIntoView({block:"start",behavior:"smooth"});
+const host=$("journeyStage"),nav=$("journeyNav"),theory=$("theoryPhase"),lab=$("practicePhase");
+if(!host||!nav||!window.IJRPedagogy||!Array.isArray(EX)||EX.length!==7)return;
+const make=(tag,cls,text)=>{
+ const node=document.createElement(tag);if(cls)node.className=cls;
+ if(text!==undefined)node.textContent=text;
+ return node;
 };
-if(unlocked>=total)completeTheory();else render();
+let progress=Array(7).fill(false);
+try{
+ const parsed=JSON.parse(localStorage.getItem(KEY)||"null");
+ if(Array.isArray(parsed)&&parsed.length===7)progress=parsed.map(v=>v===true);
+}catch{}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(progress))}catch{}}
+function showProgress(){
+ const n=progress.filter(Boolean).length;
+ $("percent").textContent=Math.round(100*n/7)+"%";
+ $("progressLabel").textContent=n+" de 7 prácticas guiadas completadas";
+ $("progressFill").style.width=(100*n/7)+"%";
+ const summary=$("journeySummary");
+ if(summary)summary.textContent=n===7?"✓ Las siete prácticas guiadas están completas. Puedes reforzarlas o abrir el laboratorio final.":n+" de 7 prácticas guiadas verificadas · Elige cualquier concepto y escribe directamente en sus celdas.";
+ nav.querySelectorAll("a[data-lesson]").forEach((a,i)=>{
+   a.classList.toggle("is-done",progress[i]);
+   const state=a.querySelector(".journey-status");
+   if(state)state.textContent=progress[i]?"✓":"↗";
+ });
+}
+function cellValue(cells,k,seen=new Set()){
+ const raw=String(cells[k]??"").trim();
+ if(!raw)return "";
+ if(!raw.startsWith("=")){
+   const n=Number(raw);
+   return raw!==""&&Number.isFinite(n)?n:raw;
+ }
+ if(seen.has(k))return "#CIRCULAR!";
+ const ancestors=new Set(seen);ancestors.add(k);
+ const formula=raw.slice(1).toUpperCase().replace(/\s+/g,"");
+ const sum=/^SUMA\(([A-E][1-6]):([A-E][1-6])\)$/.exec(formula);
+ if(sum){
+   const start=sum[1],end=sum[2],columns="ABCDE";
+   const left=Math.min(columns.indexOf(start[0]),columns.indexOf(end[0]));
+   const right=Math.max(columns.indexOf(start[0]),columns.indexOf(end[0]));
+   const top=Math.min(Number(start[1]),Number(end[1]));
+   const bottom=Math.max(Number(start[1]),Number(end[1]));
+   let total=0;
+   for(let row=top;row<=bottom;row++)for(let col=left;col<=right;col++){
+     const v=cellValue(cells,columns[col]+row,ancestors);
+     if(typeof v==="string"&&v.startsWith("#"))return v;
+     if(v!==""&&!Number.isFinite(Number(v)))return "#VALOR!";
+     total+=Number(v)||0;
+   }
+   return total;
+ }
+ const simple=/^([A-E][1-6])([+\-*/])([A-E][1-6])$/.exec(formula);
+ if(!simple)return "#FÓRMULA!";
+ const a=cellValue(cells,simple[1],ancestors),b=cellValue(cells,simple[3],ancestors);
+ if(typeof a==="string"&&a.startsWith("#"))return a;
+ if(typeof b==="string"&&b.startsWith("#"))return b;
+ const x=Number(a),y=Number(b);
+ if(!Number.isFinite(x)||!Number.isFinite(y))return "#VALOR!";
+ switch(simple[2]){
+  case "+":return x+y;
+  case "-":return x-y;
+  case "*":return x*y;
+  case "/":return y===0?"#DIV/0!":x/y;
+ }
+ return "#FÓRMULA!";
+}
+function spreadsheet(ex,index){
+ const shell=make("section","live-sheet");
+ const head=make("div","live-sheet-head");
+ head.append(make("strong","","HOJA DE EXCEL · ESCRIBE EN LAS CELDAS"));
+ head.append(make("small","","Las celdas resaltadas se pueden editar · Enter confirma el dato"));
+ const bar=make("div","live-formula-bar");
+ const address=make("output","live-cell-address",ex.editable[0]);
+ address.setAttribute("aria-label","Dirección de la celda seleccionada");
+ const fx=make("span","live-fx","ƒx");
+ const formula=make("input","live-formula");
+ formula.setAttribute("aria-label","Barra de fórmulas del ejercicio "+(index+1));
+ formula.placeholder="Selecciona una celda para escribir";
+ formula.autocomplete="off";formula.spellcheck=false;
+ bar.append(address,fx,formula);
+ const wrap=make("div","live-sheet-scroll");
+ const table=make("table","live-spreadsheet");
+ table.setAttribute("aria-label","Hoja editable del concepto "+(index+1));
+ const columns=["A","B","C","D","E"];
+ const thead=make("thead"),rowHead=make("tr");
+ rowHead.append(make("th","",""));
+ columns.forEach(col=>{const th=make("th","",col);th.scope="col";rowHead.append(th)});
+ thead.append(rowHead);table.append(thead);
+ const tbody=make("tbody");table.append(tbody);wrap.append(table);
+ const actions=make("div","live-sheet-actions");
+ const check=make("button","live-check","Comprobar mi hoja");check.type="button";
+ const reset=make("button","live-reset","Reiniciar datos");reset.type="button";
+ const feedback=make("div","live-feedback","Selecciona una celda editable, escribe tu respuesta y presiona Enter. Luego comprueba.");
+ feedback.setAttribute("role","status");feedback.setAttribute("aria-live","polite");
+ const computed=make("div","live-computed");
+ computed.setAttribute("aria-live","polite");
+ computed.textContent="Los resultados se calculan a partir de las referencias escritas.";
+ actions.append(check,reset);
+ shell.append(head,bar,wrap,computed,actions,feedback);
+ const cells={...ex.seed};
+ let selected=ex.editable[0],editor=null;
+ const positions=new Map();
+ for(let r=1;r<=6;r++){
+  const tr=make("tr");
+  const h=make("th","live-row-head",String(r));h.scope="row";tr.append(h);
+  for(const col of columns){
+   const key=col+r,editable=ex.editable.includes(key);
+   const td=make("td",editable?"live-editable":"live-readonly");
+   td.dataset.cell=key;td.tabIndex=0;td.setAttribute("role","gridcell");
+   td.setAttribute("aria-label",key+(editable?", editable":", solo lectura"));
+   const view=make("span","live-cell-view");td.append(view);
+   td.addEventListener("click",()=>select(key,true));
+   td.addEventListener("keydown",ev=>{
+    if(ev.target!==td)return;
+    if(ev.key==="Enter"||ev.key==="F2"){ev.preventDefault();select(key,true);}
+    if(ev.key.length===1&&!ev.ctrlKey&&!ev.altKey&&editable){
+      ev.preventDefault();select(key,true);if(editor){editor.value=ev.key;editor.dispatchEvent(new Event("input",{bubbles:true}));}
+    }
+    const directions={ArrowRight:[0,1],ArrowLeft:[0,-1],ArrowDown:[1,0],ArrowUp:[-1,0]};
+    if(directions[ev.key]){
+     ev.preventDefault();const delta=directions[ev.key],rr=Math.min(6,Math.max(1,r+delta[0])),cc=Math.min(4,Math.max(0,columns.indexOf(col)+delta[1]));
+     select(columns[cc]+rr,false);positions.get(columns[cc]+rr)?.focus();
+    }
+   });
+   positions.set(key,td);tr.append(td);
+  }
+  tbody.append(tr);
+ }
+ function updateViews(){
+  for(const [k,td] of positions){
+   const view=td.querySelector(".live-cell-view");
+   const val=cellValue(cells,k);
+   view.textContent=val===""?"\u00a0":String(val);
+   td.classList.toggle("live-selected",k===selected);
+   td.classList.toggle("live-error",typeof val==="string"&&val.startsWith("#"));
+  }
+  formula.value=cells[selected]||"";
+  address.textContent=selected;
+  const v=cellValue(cells,selected);
+  computed.textContent=selected+": "+(v===""?"sin dato":String(v))+
+   (String(cells[selected]||"").startsWith("=")?" · Fórmula: "+cells[selected]:"");
+ }
+ function closeEditor(){
+  if(!editor)return;
+  const td=positions.get(selected);
+  if(td?.contains(editor))editor.remove();
+  editor=null;
+  updateViews();
+ }
+ function commit(raw){
+  if(!ex.editable.includes(selected))return;
+  cells[selected]=String(raw).trim();
+  feedback.className="live-feedback";
+  feedback.textContent="Dato registrado. Puedes corregirlo o comprobar la hoja.";
+  updateViews();
+ }
+ function select(key,open){
+  if(editor){const value=editor.value;closeEditor();commit(value);}
+  selected=key;updateViews();
+  if(open&&ex.editable.includes(key)){
+   const td=positions.get(key);
+   const input=make("input","live-cell-editor");
+   input.value=cells[key]||"";
+   input.setAttribute("aria-label","Editar celda "+key);
+   editor=input;td.append(input);
+   input.addEventListener("input",()=>{formula.value=input.value;});
+   input.addEventListener("keydown",ev=>{
+    if(ev.key==="Enter"||ev.key==="Tab"){
+     ev.preventDefault();const val=input.value;closeEditor();commit(val);
+     if(ev.key==="Tab"){const next=ex.editable.indexOf(key)+1;if(ex.editable[next])select(ex.editable[next],true);}
+     else td.focus();
+    }else if(ev.key==="Escape"){ev.preventDefault();closeEditor();}
+   });
+   input.addEventListener("blur",()=>{if(editor===input){const val=input.value;closeEditor();commit(val);}});
+   input.focus();input.select();
+  }
+ }
+ formula.addEventListener("input",()=>{if(editor)editor.value=formula.value;});
+ function formulaCommit(){
+  if(editor){const old=editor;editor=null;old.remove();}
+  commit(formula.value);
+ }
+ formula.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();formulaCommit();positions.get(selected)?.focus();}});
+ formula.addEventListener("blur",()=>{if(document.activeElement!==formula)formulaCommit()});
+ function verify(){
+  if(editor){const val=editor.value;closeEditor();commit(val);}
+  const missing=[];
+  for(const [key,expected] of Object.entries(ex.check)){
+   const raw=String(cells[key]||"").trim();
+   const actual=cellValue(cells,key);
+   if(!raw){missing.push("Completa "+key);continue;}
+   if(ex.mustFormula?.includes(key)&&!raw.startsWith("=")){missing.push(key+": escribe una fórmula que comience con =");continue;}
+   const correct=typeof expected==="number"?
+    typeof actual==="number"&&Math.abs(actual-expected)<1e-9:
+    String(actual).trim().toLocaleUpperCase("es")===String(expected).trim().toLocaleUpperCase("es");
+   if(!correct)missing.push(key+": revisa el valor o la fórmula");
+  }
+  if(missing.length){
+   feedback.className="live-feedback live-feedback-error";
+   feedback.textContent="Revisa tu respuesta: "+missing.join(" · ")+". "+ex.hint;
+   return;
+  }
+  progress[index]=true;save();showProgress();
+  feedback.className="live-feedback live-feedback-success";
+  feedback.textContent="✓ ¡Bien hecho! "+ex.worked+" Puedes seguir con el siguiente concepto.";
+  const next=document.getElementById("lesson-"+(index+2));
+  if(next)next.querySelector(".live-sheet")?.classList.add("live-next-available");
+ }
+ check.onclick=verify;
+ reset.onclick=()=>{
+  if(editor){editor.remove();editor=null}
+  Object.keys(cells).forEach(key=>delete cells[key]);
+  Object.assign(cells,ex.seed);
+  selected=ex.editable[0];updateViews();
+  feedback.className="live-feedback";feedback.textContent="Hoja reiniciada. Intenta de nuevo.";
+ };
+ updateViews();
+ return shell;
+}
+function buildNav(){
+ nav.replaceChildren();
+ NAMES.forEach((name,i)=>{
+  const a=make("a","journey-nav-item");
+  a.href="#lesson-"+(i+1);a.dataset.lesson=String(i+1);
+  a.append(make("span","journey-num",String(i+1).padStart(2,"0")));
+  a.append(make("span","journey-nav-text",name));
+  a.append(make("span","journey-status",progress[i]?"✓":"↗"));
+  nav.append(a);
+ });
+}
+function assembleLesson(i){
+ const ex=EX[i];
+ const sections=make("div");
+ window.IJRPedagogy.renderUnit1(i,sections);
+ const parts=[...sections.children];
+ const article=make("article","study-lesson");
+ article.id="lesson-"+(i+1);
+ const header=make("header","study-lesson-head");
+ header.append(make("span","study-index","CONCEPTO "+String(i+1).padStart(2,"0")+" / 07"));
+ header.append(make("h2","",NAMES[i]));
+ header.append(make("p","",ex.summary));
+ article.append(header);
+ const foundation=make("div","study-foundation");
+ if(parts[0])foundation.append(parts[0]);
+ if(parts[1])foundation.append(parts[1]);
+ article.append(foundation);
+ const videoPanel=make("section","study-video");
+ const videoHeader=make("div","study-video-header");
+ videoHeader.append(make("h3","","Observa cómo se hace"),make("span","","VIDEO FULL HD · OPCIONAL"));
+ const video=document.createElement("video");
+ video.controls=true;video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=true;video.preload="metadata";
+ video.poster="../assets/videos/thumbs/"+(i===0?"topic-01":"topic-"+String(i+1).padStart(2,"0"))+".mp4";
+ video.removeAttribute("poster");
+ video.src="../assets/videos/"+MEDIA[i]+".mp4";
+ video.setAttribute("aria-label","Video de "+NAMES[i]);
+ const videoNote=make("p","study-video-note","Puedes reproducir, pausar o ampliar desde los controles del video. No es obligatorio verlo completo para practicar.");
+ videoPanel.append(videoHeader,video,videoNote);
+ article.append(videoPanel);
+ if(parts[2])article.append(parts[2]);
+ if(parts[3]){
+  const guide=make("details","study-steps");
+  const summary=make("summary","","Ver instrucciones del ejemplo paso a paso");
+  guide.append(summary,parts[3]);
+  article.append(guide);
+ }
+ const exercise=make("section","study-activity");
+ exercise.append(make("div","study-activity-head","APRENDE HACIENDO · EDITA LAS CELDAS"));
+ exercise.append(make("h3","","Ahora inténtalo en Excel"));
+ exercise.append(make("p","",ex.task));
+ exercise.append(spreadsheet(ex,i));
+ article.append(exercise);
+ if(parts[4]){
+  const deep=make("details","study-review");
+  deep.append(make("summary","","Preguntas de repaso y reto adicional"),parts[4]);
+  article.append(deep);
+ }
+ if(i<6){
+  const continueRow=make("div","study-continue");
+  const a=make("a","study-next-link","Siguiente: "+NAMES[i+1]+" →");
+  a.href="#lesson-"+(i+2);continueRow.append(a);article.append(continueRow);
+ }
+ return article;
+}
+buildNav();host.replaceChildren();
+for(let i=0;i<7;i++)host.append(assembleLesson(i));
+showProgress();
+$("openPractice").hidden=false;
+$("openPractice").textContent="Abrir laboratorio final de 7 retos →";
+$("openPractice").onclick=()=>{
+ lab.hidden=false;
+ if(typeof window.startPractice==="function")window.startPractice();
+ lab.scrollIntoView({behavior:"smooth",block:"start"});
+};
+$("restartTheory").onclick=()=>{
+ lab.hidden=true;
+ theory.scrollIntoView({behavior:"smooth",block:"start"});
+};
 })();
