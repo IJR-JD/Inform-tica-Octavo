@@ -24,7 +24,7 @@ try{
   }
   state.position=Number.isSafeInteger(raw.position)?Math.max(0,Math.min(23,raw.position)):0;
   state.code=typeof raw.code==="string"?raw.code.replace(/[^A-Za-z0-9_-]/g,"").slice(0,24):"";
-  if(!Number.isFinite(state.deadline)||!Number.isFinite(state.started))state=blank();
+  if(state.status!=="ready"&&(!Number.isFinite(state.deadline)||!Number.isFinite(state.started)))state=blank();
  }
 }catch{}
 let timerId=null,lastMinute=null;
@@ -154,13 +154,13 @@ function updateQuestionNav(){
 function go(i){
  if(state.status!=="active")return;
  if(now()>=state.deadline){finish("expired");return}
- state.position=Math.min(23,Math.max(0,i));save();$("examReview").hidden=true;$("examQuestion").hidden=false;
+ state.position=Math.min(23,Math.max(0,i));save();$("examReview").hidden=true;$("examQuestion").hidden=false;$("examActions").hidden=false;
  renderQuestion();$("examQuestion").scrollIntoView({block:"start"});
 }
 function review(){
  if(state.status!=="active")return;
  if(now()>=state.deadline){finish("expired");return}
- $("examQuestion").hidden=true;$("examReview").hidden=false;
+ $("examQuestion").hidden=true;$("examReview").hidden=false;$("examActions").hidden=true;
  const review=$("examReview");review.replaceChildren();
  review.append(make("h2","","Revisa antes de entregar"));
  review.append(make("p","","Has respondido "+answered()+" de 24 preguntas. Las respuestas vacías contarán como no acertadas. El tiempo sigue corriendo hasta entregar."));
@@ -236,7 +236,7 @@ function render(){
   $("examStudentCode").oninput=e=>{state.code=e.target.value.replace(/[^A-Za-z0-9_-]/g,"").slice(0,24);e.target.value=state.code;save()};
  }else if(active){
   if(state.deadline<=now()){finish("expired");return}
-  $("examReview").hidden=true;$("examQuestion").hidden=false;
+  $("examReview").hidden=true;$("examQuestion").hidden=false;$("examActions").hidden=false;
   $("examBack").onclick=()=>go(state.position-1);
   $("examClock").textContent=timeString(state.deadline-now());
   renderQuestion();timerId=setInterval(updateTimer,1000);updateTimer();
