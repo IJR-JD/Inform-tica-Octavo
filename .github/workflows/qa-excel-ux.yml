@@ -63,3 +63,11 @@ jobs:
           node tests/diagnostic-qa.mjs
           node tests/studio-shell-qa.mjs
           node tests/studio-media-qa.mjs
+
+      - name: Upload visual review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ti8-studio-visual-review
+          path: qa-visual/
+          if-no-files-found: ignore
