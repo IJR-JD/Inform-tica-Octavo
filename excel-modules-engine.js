@@ -21,7 +21,7 @@ function loadJson(k,fallback){try{const v=JSON.parse(localStorage.getItem(k));re
 let progress=loadJson(key,Array(count).fill(false));
 if(!Array.isArray(progress)||progress.length!==count)progress=Array(count).fill(false);
 progress=progress.map(v=>v===true);
-for(let i=1;i<count;i++)if(!progress[i-1])progress[i]=false;
+// Independent exercises: preserve all individually verified records.
 let cache=loadJson(dataKey,{});
 if(!cache||typeof cache!=="object"||Array.isArray(cache))cache={};
 const save=()=>{try{localStorage.setItem(key,JSON.stringify(progress));localStorage.setItem(dataKey,JSON.stringify(cache))}catch{}};
@@ -32,28 +32,18 @@ function predecessorComplete(){
 }
 // Prior module completion is a recommendation, not a condition of access.
 const predecessorPending=!predecessorComplete();
-function frontier(){const idx=progress.indexOf(false);return idx===-1?count:idx}
 function sync(){
- const f=frontier(),correct=progress.filter(Boolean).length;
+ const correct=progress.filter(Boolean).length;
  $("modulePercent").textContent=Math.round(100*correct/count)+"%";
  $("moduleProgress").textContent=correct+" de "+count+" ejercicios registrados";
  $("moduleProgressBar").style.width=(100*correct/count)+"%";
- $("moduleFeedback").textContent=f===count?
- "✓ Módulo completado. Continúa al siguiente módulo.":"Ejercicio "+(f+1)+" de "+count+" · Completa la hoja y presiona «Comprobar» para continuar.";
+ $("moduleFeedback").textContent=correct===count?"✓ Módulo completado. Continúa al siguiente módulo.":"Todos los contenidos están disponibles. Elige cualquier ejercicio y pulsa «Comprobar» para registrar tu avance.";
  document.querySelectorAll("[data-module-link]").forEach((a,i)=>{
-  const disabled=i>f;
-  a.classList.toggle("is-locked",disabled);
-  a.classList.toggle("is-done",progress[i]);
-  a.setAttribute("aria-disabled",String(disabled));
-  if(disabled){a.removeAttribute("href");a.tabIndex=-1}else{a.href="#module-step-"+(i+1);a.tabIndex=0}
-  a.querySelector(".module-state").textContent=progress[i]?"✓":disabled?"🔒":"Ahora";
+  a.classList.remove("is-locked");a.classList.toggle("is-done",progress[i]);a.setAttribute("aria-disabled","false");a.href="#module-step-"+(i+1);a.tabIndex=0;
+  a.querySelector(".module-state").textContent=progress[i]?"✓":"↗";
  });
- document.querySelectorAll(".module-lesson").forEach((x,i)=>{
-  x.hidden=i>f;
-  const next=x.querySelector(".module-next");
-  if(next)next.hidden=!progress[i];
- });
- const finish=$("finishModule");finish.hidden=f!==count;
+ document.querySelectorAll(".module-lesson").forEach(x=>{x.hidden=false;const next=x.querySelector(".module-next");if(next)next.hidden=false});
+ $("finishModule").hidden=false;
 }
 function evaluate(cells,ref){const r=TI8Excel.evaluate(cells,ref,{cols:5,rows:6});return typeof r.value==="boolean"?(r.value?"VERDADERO":"FALSO"):r.value}
 function sheet(item,i){
@@ -86,7 +76,7 @@ function sheet(item,i){
   if(item.chart)drawChart();
  }
  function invalidate(){
-  if(progress[i]){for(let j=i;j<count;j++)progress[j]=false;sync()}
+  if(progress[i]){progress[i]=false;sync()}
  }
  function commit(value){
   const after=String(value).trim(),old=String(cells[selected]??"");
@@ -199,14 +189,14 @@ function sheet(item,i){
   }
   progress[i]=true;cache[i]={...cells};save();sync();
   feedback.className="live-feedback live-feedback-success";
-  feedback.textContent="✓ Ejercicio registrado y aprobado. "+(i+1<count?"Ya puedes pasar al siguiente concepto.":"Has completado el módulo.");
+  feedback.textContent="✓ Ejercicio registrado y aprobado. "+(progress.every(Boolean)?"Has completado el módulo.":"Puedes practicar cualquier concepto.");
  };
  reset.onclick=()=>{
   if(editor)detachEditor();
   barDirty=false;
   for(const k of Object.keys(cells))delete cells[k];
   Object.assign(cells,item.seed);selected=Object.keys(item.targets)[0];
-  for(let j=i;j<count;j++)progress[j]=false;
+  progress[i]=false;
   cache[i]={...cells};save();sync();visual();
   feedback.className="live-feedback";feedback.textContent="Hoja reiniciada. Comprueba otra vez para continuar.";
  };
@@ -261,7 +251,7 @@ function render(){
  $("moduleNo").textContent="THEORY "+String(moduleNo).padStart(2,"0")+" · EXCEL LEARNING PATH";
  $("moduleIndexTitle").textContent="Conceptos del módulo "+moduleNo;
  $("finishModule").href=moduleNo===4?"../":"../unidad-0"+(moduleNo+1)+"-excel/";
- $("finishModule").textContent=moduleNo===4?"✓ Módulo 04 completado · Volver al Learning Hub":"Continuar al módulo "+(moduleNo+1)+" →";
+ $("finishModule").textContent=moduleNo===4?"Volver al Learning Hub":"Continuar al módulo "+(moduleNo+1)+" →";
  sync();
 }
 render();

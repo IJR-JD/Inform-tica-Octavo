@@ -19,3 +19,6 @@ All four calculation surfaces use `excel-core.js`. Scalar educational subset, no
 
 ### Independent module access
 Modules 02–04 are available even when the preceding module is incomplete or has no local progress. The previous module is suggested for review only. Sequential verification within each module and existing progress keys remain unchanged.
+
+### Full open learning path
+Every lesson, video, figure, worksheet and optional final lab in modules 01–04 is accessible without prerequisites, including on a fresh browser. Individual checks record completion; editing or resetting one exercise revokes only that exercise, not others. The home page counts independent completions. No progress is fabricated by visiting content.

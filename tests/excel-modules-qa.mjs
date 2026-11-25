@@ -27,9 +27,9 @@ async function verify(p,i,shouldPass=true){
  ok(shouldPass?text.includes("registrado y aprobado"):text.includes("Revisa"),"Exercise "+i+": "+(shouldPass?"accepted":"rejected")+" "+text.slice(0,90));
 }
 async function lock(p,i){
- ok(await p.locator("#module-step-"+i).isHidden(),"Exercise "+i+" gated");
+ ok(await p.locator("#module-step-"+i).isVisible(),"Exercise "+i+" remains available");
  const nav=p.locator('#moduleNav [data-module-link="'+i+'"]');
- ok(await nav.getAttribute("href")===null,"No bypass link to exercise "+i);
+ ok(await nav.getAttribute("href")==="#module-step-"+i,"Direct link to exercise "+i);
 }
 async function visible(p,i){
  ok(await p.locator("#module-step-"+i).isVisible(),"Exercise "+i+" accessible");
@@ -61,7 +61,11 @@ try{
  ok(await page.evaluate(()=>localStorage.getItem("ijr-ti8-excel-practice-v3"))===null,"Opening later modules does not fabricate Module 1 progress");
  await page.goto(ORIGIN+"/");
  for(let i=0;i<4;i++)ok((await page.locator(".hub-topic-card").nth(i).locator(".hub-topic-status").innerText()).includes("AVAILABLE"),"Hub module "+(i+1)+" is available");
- await page.evaluate(()=>localStorage.setItem("ijr-ti8-excel-practice-v3",JSON.stringify(Array(7).fill(true))));
+ await launch(page,2);
+ await edit(page,5,"D4","=B2*C2+B3*C3");await verify(page,5);
+ ok(await page.locator("#modulePercent").innerText()==="20%","Exercise 5 verified before exercise 1");
+ await page.reload();ok(await page.locator("#modulePercent").innerText()==="20%","Out-of-order approval persists");
+ await page.evaluate(()=>{localStorage.removeItem("ijr-ti8-module-2-progress-v1");localStorage.removeItem("ijr-ti8-module-2-cells-v1");localStorage.setItem("ijr-ti8-excel-practice-v3",JSON.stringify(Array(7).fill(true)))});
  await launch(page,2);
  await verify(page,1,false);
  await edit(page,1,"B4","=B2+B3");
@@ -152,7 +156,7 @@ try{
  ok(await page.locator("#modulePercent").innerText()==="100%","Module 4 progress persists");
  await edit(page,3,"B3","39");
  await lock(page,4);
- ok(await page.locator("#modulePercent").innerText()==="40%","Module 4 revoked downstream approval after source change");
+ ok(await page.locator("#modulePercent").innerText()==="80%","Only edited exercise approval is revoked");
  await edit(page,3,"B3","40");
  await verify(page,3);
  await visible(page,4);

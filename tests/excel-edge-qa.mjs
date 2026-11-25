@@ -56,7 +56,7 @@ try{
  check((await page.locator("#progressLabel").innerText()).includes("3 de 7"),"Blur without input does not regress calculated result");
  await edit(3,"B2","9");
  check((await page.locator("#progressLabel").innerText()).includes("2 de 7"),"Changing source values invalidates previously verified result");
- check(await page.locator("#lesson-4").isHidden(),"Next lesson relocks after source change");
+ check(await page.locator("#lesson-4").isVisible(),"Next lesson remains visible after source change");
  await page.locator("#lesson-3 .live-check").click();
  check((await page.locator("#progressLabel").innerText()).includes("3 de 7"),"Rechecking recalculated formula restores lesson 4");
  // Repair malformed persistence, must not crash.

@@ -1,5 +1,5 @@
 /* Senior functional QA: real 7/7 progression and Excel editing in Chromium.
- * Every lesson must be solvable; no skipping before verification.
+ * Every lesson is independently accessible; verification records only correct answers.
  */
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
@@ -34,12 +34,7 @@ async function unlocked(page,i){
  const link=page.locator('#journeyNav a[data-lesson="'+i+'"]');
  check((await link.getAttribute("aria-disabled"))==="false","Navigation lesson "+i+" enabled");
 }
-async function locked(page,i){
- check(await page.locator("#lesson-"+i).isHidden(),"Lesson "+i+" is hidden while locked");
- const link=page.locator('#journeyNav a[data-lesson="'+i+'"]');
- check((await link.getAttribute("aria-disabled"))==="true","Navigation lesson "+i+" disabled");
- check(await link.getAttribute("href")===null,"Lesson "+i+" has no bypass hyperlink");
-}
+async function locked(page,i){await unlocked(page,i)}
 try{
  const page=await browser.newPage({viewport:{width:1440,height:900}});
  page.on("pageerror",e=>errors.push(String(e)));
@@ -50,7 +45,8 @@ try{
  check(await page.locator(".study-video video").count()===7,"Seven Full HD videos retained");
  check(await page.locator(".live-spreadsheet").count()===7,"Seven real editable spreadsheets created");
  check(await page.locator("#practicePhase").isHidden(),"Final lab initially closed");
- check(await page.locator("#openPractice").isHidden(),"Final lab remains locked until all exercises are registered");
+ check(await page.locator("#openPractice").isVisible(),"Final lab accessible before any approvals");
+ await page.locator("#openPractice").click();check(await page.locator("#steps button:enabled").count()===7,"All seven final lab tasks accessible");await page.locator("#restartTheory").click();
  for(let i=2;i<=7;i++)await locked(page,i);
  await unlocked(page,1);
  check(await page.locator("#lesson-1 .study-steps").evaluate(el=>el.open),"Worked examples available without click");
@@ -68,7 +64,7 @@ try{
  check((await cell(page,1,"B2").locator(".live-cell-view").innerText())==="VENTAS","Lesson 1 writes VENTAS to actual B2 cell");
  await testFeedback(page,1);
  await unlocked(page,2);await locked(page,3);
- check(await page.locator("#lesson-1 .study-next-link").isVisible(),"Next lesson link appears only after registration");
+ check(await page.locator("#lesson-1 .study-next-link").isVisible(),"Next lesson link remains available");
 
  await edit(page,2,"A2","Cuaderno");
  await edit(page,2,"B2","4");
@@ -103,7 +99,7 @@ try{
  check((await cell(page,7,"B5").locator(".live-cell-view").innerText())==="60","SUMA computes correct full range");
  await testFeedback(page,7);
  check((await page.locator("#progressLabel").innerText()).includes("7 de 7"),"Progress reaches seven verified registrations");
- check(await page.locator("#openPractice").isVisible(),"Optional final laboratory unlocks after 7/7 verified");
+ check(await page.locator("#openPractice").isVisible(),"Optional final laboratory remains accessible");
  await page.locator("#openPractice").click();
  check(await page.locator("#practicePhase").isVisible(),"Original 7-question lab opens");
  check(await page.locator("#steps button").count()===7,"Legacy lab retains all seven tasks");
@@ -114,14 +110,14 @@ try{
  check((await page.locator("#progressLabel").innerText()).includes("7 de 7"),"Verified progress persists across reload");
  check((await cell(page,7,"B5").locator(".live-cell-view").innerText())==="60","Spreadsheet contents persist across reload");
  await edit(page,3,"B4","=B2-B3");
- check((await page.locator("#progressLabel").innerText()).includes("2 de 7"),"Changing an approved answer revokes its and downstream approvals");
+ check((await page.locator("#progressLabel").innerText()).includes("6 de 7"),"Changing an approved answer revokes only that exercise");
  await locked(page,4);
- check(await page.locator("#openPractice").isHidden(),"Final lab re-locks after changing completed answer");
+ check(await page.locator("#openPractice").isVisible(),"Final lab remains accessible after editing");
  await edit(page,3,"B4","=B2+B3");
  await testFeedback(page,3);
  await unlocked(page,4);
  await page.locator("#lesson-3 .live-reset").click();
- check((await page.locator("#progressLabel").innerText()).includes("2 de 7"),"Reset invalidates exercise completion");
+ check((await page.locator("#progressLabel").innerText()).includes("6 de 7"),"Reset invalidates only its own completion");
  await locked(page,4);
  await page.setViewportSize({width:390,height:844});
  check(await page.locator("#lesson-1 .live-sheet").isVisible(),"Workbook works at 390px mobile viewport");

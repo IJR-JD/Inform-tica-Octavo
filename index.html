@@ -30,7 +30,7 @@ function moduleStats(index){
  const storageKey=index===0?"ijr-ti8-excel-practice-v3":"ijr-ti8-module-"+(index+1)+"-progress-v1";
  let arr=[];
  try{const v=JSON.parse(localStorage.getItem(storageKey)||"[]");if(Array.isArray(v)&&v.length===length)arr=v}catch{}
- let checked=0;for(const answer of arr){if(answer===true)checked++;else break}
+ const checked=arr.filter(answer=>answer===true).length;
  return {done:checked===length,percent:Math.round(100*checked/length),available:true};
 }
 function completedCount(){return DATA.topics.reduce((n,_,i)=>n+(moduleStats(i).done?1:0),0)}
