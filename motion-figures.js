@@ -449,11 +449,15 @@ function CodePlayer(type,lesson,root,opts){
 function Player(type,root,opts={}){const lesson=LESSONS[type];return lesson.kind==="code"?CodePlayer(type,lesson,root,opts):SheetPlayer(type,lesson,root,opts)}
 
 /* =====================  PUBLIC RENDER  ===================== */
-let token=0,inline=null,loopTimer=null;
+const sessions=new WeakMap();
+function snapshot(type,root,n){
+ if(!LESSONS[type])return false;
+ root.replaceChildren();root.classList.add("motion-stage","motion-snapshot");
+ const p=Player(type,root);p.paint(n??p.steps.length-1,false);p.destroy();return true;
+}
 function render(type,root){
-  token++;const generation=token;
-  if(loopTimer){clearTimeout(loopTimer);loopTimer=null}
-  if(inline){inline.destroy();inline=null}
+  sessions.get(root)?.();
+  let loopTimer=null,disposed=false;
   root.replaceChildren();
   if(!LESSONS[type])return;
   const stage=document.createElement("div");stage.className="motion-stage"+(LESSONS[type].kind==="code"?" motion-code":"");
@@ -462,24 +466,31 @@ function render(type,root){
   const mkBtn=(t,c)=>{const b=document.createElement("button");b.type="button";b.textContent=t;if(c)b.className=c;return b};
   const back=mkBtn("← Anterior"),play=mkBtn("❚❚ Pausar","motion-primary"),forward=mkBtn("Siguiente →"),expand=mkBtn("⛶ Ampliar explicación","motion-expand");
   const count=document.createElement("span");count.className="motion-count";
-  controls.append(back,play,forward,count,expand);
+  const replay=mkBtn("↺ Reiniciar"),speed=document.createElement("select");speed.className="motion-speed";speed.setAttribute("aria-label","Velocidad de animación");
+  for(const v of [0.5,1,1.5,2]){const o=document.createElement("option");o.value=v;o.textContent=v+"×";speed.append(o)}speed.value="1";
+  controls.append(back,play,forward,replay,speed,count,expand);
+  const timeline=document.createElement("div");timeline.className="motion-timeline";timeline.setAttribute("role","group");timeline.setAttribute("aria-label","Pasos de la animación");
   const description=document.createElement("div");description.className="motion-explanation";description.setAttribute("aria-live","off");
-  root.append(stage,progress,controls,description);
+  root.append(stage,progress,timeline,controls,description);
   const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let playing=!reduce,paused=false;
+  let playing=false,paused=false;
+  const ms=n=>p.duration(n)/Number(speed.value);
   const p=Player(type,stage,{onStep:(n,s)=>{
     description.replaceChildren();const strong=document.createElement("strong");strong.textContent="Paso "+(n+1)+" de "+p.steps.length+". ";
     description.append(strong,document.createTextNode(s.text));
-    count.textContent=(n+1)+" / "+p.steps.length+(playing?" · EN BUCLE":" · PAUSADO");
+    count.textContent=(n+1)+" / "+p.steps.length+(playing?" · REPRODUCIENDO":" · PAUSADO");
     back.disabled=n===0;forward.disabled=n===p.steps.length-1;play.textContent=playing?"❚❚ Pausar":"▶ Reproducir";
     bar.style.animation="none";bar.getBoundingClientRect();
-    bar.style.animation=playing&&!paused?"motionProgress "+p.duration(n)+"ms linear forwards":"none";
-    bar.style.width=playing?"":((n+1)/p.steps.length*100)+"%";
+    bar.style.animation="none";bar.style.width=((n+1)/p.steps.length*100)+"%";
+    timeline.querySelectorAll("button").forEach((b,i)=>{b.classList.toggle("is-current",i===n);b.classList.toggle("is-past",i<n);if(i===n)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current")});
   }});
-  inline=p;
-  function schedule(){if(loopTimer)clearTimeout(loopTimer);if(!playing||paused||generation!==token)return;
-    loopTimer=setTimeout(()=>{if(generation!==token||!playing||paused)return;p.paint((p.step+1)%p.steps.length);schedule()},p.duration(p.step))}
+  function schedule(){if(loopTimer)clearTimeout(loopTimer);if(!playing||paused||disposed)return;
+    loopTimer=setTimeout(()=>{if(disposed||!playing||paused)return;if(!root.isConnected||!root.getClientRects().length){stop();if(root.isConnected)p.paint(p.step,false);return}if(p.step===p.steps.length-1){stop();p.paint(p.step,false);return}p.paint(p.step+1);schedule()},ms(p.step))}
   const stop=()=>{playing=false;if(loopTimer)clearTimeout(loopTimer)};
+  sessions.set(root,()=>{disposed=true;stop();p.destroy()});
+  for(let i=0;i<p.steps.length;i++){const b=mkBtn(String(i+1).padStart(2,"0"));b.setAttribute("aria-label","Ir al paso "+(i+1));b.onclick=()=>{stop();p.paint(i,false)};timeline.append(b)}
+  replay.onclick=()=>{stop();p.paint(0,false)};speed.onchange=()=>{if(playing)schedule()};
+  if(!document.getElementById("figureDialog"))expand.hidden=true;
   back.onclick=()=>{stop();p.paint(p.step-1,false)};
   forward.onclick=()=>{stop();p.paint(p.step+1,false)};
   play.onclick=()=>{if(playing){stop();p.paint(p.step,false)}else{playing=true;p.paint(p.step===p.steps.length-1?0:p.step);schedule()}};
@@ -498,13 +509,13 @@ function render(type,root){
       bigBar.style.animation="none";bigBar.getBoundingClientRect();bigBar.style.animation=reduce?"none":"motionProgress "+big.duration(n)+"ms linear forwards"}});
     const tick=()=>{bigTimer=setTimeout(()=>{big.paint((big.step+1)%big.steps.length);tick()},big.duration(big.step))};
     const cleanup=()=>{clearTimeout(bigTimer);big.destroy();dialog.removeEventListener("close",cleanup);body.replaceChildren();
-      paused=false;if(generation===token&&playing){p.paint(p.step);schedule()}};
+      paused=false;if(!disposed&&playing){p.paint(p.step);schedule()}};
     dialog.addEventListener("close",cleanup);
     if(typeof dialog.showModal==="function")dialog.showModal();else{dialog.setAttribute("open","");dialog.focus()}
     if(reduce)big.paint(big.steps.length-1,false);else{big.paint(0);tick()}
   };
-  if(reduce)p.paint(p.steps.length-1,false);else{p.paint(0);schedule()}
+  p.paint(0,false);
 }
 function loopMs(type){const d=document.createElement("div"),pl=Player(type,d);let t=0;pl.steps.forEach((_,i)=>t+=pl.duration(i));pl.destroy();return t}
-window.AnimatedExcelFigures={render,loopMs,lessons:Object.keys(LESSONS),source:"motion-figures.js"};
+window.AnimatedExcelFigures={render,snapshot,loopMs,lessons:Object.keys(LESSONS),source:"motion-figures.js"};
 })();

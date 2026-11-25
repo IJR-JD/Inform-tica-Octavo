@@ -1,5 +1,7 @@
 name: QA · Excel editable UX (Chromium)
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -9,6 +11,9 @@ on:
       - 'unidad-03-excel/**'
       - 'unidad-04-excel/**'
       - 'excel-modules-*.js'
+      - 'excel-core.js'
+      - 'tests/excel-core-qa.mjs'
+      - 'tests/excel-functions-browser-qa.mjs'
       - 'excel-modules.css'
       - 'pedagogia-modulos.js'
       - 'tests/excel-ux-qa.mjs'
@@ -16,6 +21,12 @@ on:
       - 'tests/excel-modules-qa.mjs'
       - 'tests/diagnostic-qa.mjs'
       - 'index.html'
+      - 'studio-shell.css'
+      - 'motion-figures.*'
+      - 'studio-exercise-figure.js'
+      - 'tests/studio-media-qa.mjs'
+      - 'excel-sandbox/**'
+      - 'tests/studio-shell-qa.mjs'
       - '.github/workflows/qa-excel-ux.yml'
   workflow_dispatch:
 permissions:
@@ -49,7 +60,19 @@ jobs:
           exit 1
       - name: Verify user behavior in headless Chromium
         run: |
+          node tests/excel-core-qa.mjs
+          node tests/excel-functions-browser-qa.mjs
           node tests/excel-ux-qa.mjs
           node tests/excel-edge-qa.mjs
           node tests/excel-modules-qa.mjs
           node tests/diagnostic-qa.mjs
+          node tests/studio-shell-qa.mjs
+          node tests/studio-media-qa.mjs
+
+      - name: Upload visual review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ti8-studio-visual-review
+          path: qa-visual/
+          if-no-files-found: ignore

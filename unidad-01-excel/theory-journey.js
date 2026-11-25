@@ -93,47 +93,7 @@ function showProgress(){
  if(n!==7)lab.hidden=true;
 }
 
-function cellValue(cells,k,seen=new Set()){
- const raw=String(cells[k]??"").trim();
- if(!raw)return "";
- if(!raw.startsWith("=")){
-   const n=Number(raw);
-   return raw!==""&&Number.isFinite(n)?n:raw;
- }
- if(seen.has(k))return "#CIRCULAR!";
- const ancestors=new Set(seen);ancestors.add(k);
- const formula=raw.slice(1).toUpperCase().replace(/\s+/g,"");
- const sum=/^(?:SUMA|SUM)\(([A-E][1-6]):([A-E][1-6])\)$/.exec(formula);
- if(sum){
-   const start=sum[1],end=sum[2],columns="ABCDE";
-   const left=Math.min(columns.indexOf(start[0]),columns.indexOf(end[0]));
-   const right=Math.max(columns.indexOf(start[0]),columns.indexOf(end[0]));
-   const top=Math.min(Number(start[1]),Number(end[1]));
-   const bottom=Math.max(Number(start[1]),Number(end[1]));
-   let total=0;
-   for(let row=top;row<=bottom;row++)for(let col=left;col<=right;col++){
-     const v=cellValue(cells,columns[col]+row,ancestors);
-     if(typeof v==="string"&&v.startsWith("#"))return v;
-     if(v!==""&&!Number.isFinite(Number(v)))return "#VALOR!";
-     total+=Number(v)||0;
-   }
-   return total;
- }
- const simple=/^([A-E][1-6])([+\-*/])([A-E][1-6])$/.exec(formula);
- if(!simple)return "#FÓRMULA!";
- const a=cellValue(cells,simple[1],ancestors),b=cellValue(cells,simple[3],ancestors);
- if(typeof a==="string"&&a.startsWith("#"))return a;
- if(typeof b==="string"&&b.startsWith("#"))return b;
- const x=Number(a),y=Number(b);
- if(!Number.isFinite(x)||!Number.isFinite(y))return "#VALOR!";
- switch(simple[2]){
-  case "+":return x+y;
-  case "-":return x-y;
-  case "*":return x*y;
-  case "/":return y===0?"#DIV/0!":x/y;
- }
- return "#FÓRMULA!";
-}
+function cellValue(cells,k){const r=TI8Excel.evaluate(cells,k,{cols:5,rows:6});return typeof r.value==="boolean"?(r.value?"VERDADERO":"FALSO"):r.value}
 function spreadsheet(ex,index){
  const shell=make("section","live-sheet");
  const head=make("div","live-sheet-head");
@@ -376,7 +336,10 @@ function assembleLesson(i){
  video.src="../assets/videos/"+MEDIA[i]+".mp4";
  video.setAttribute("aria-label","Video de "+NAMES[i]);
  const videoNote=make("p","study-video-note","Puedes reproducir, pausar o ampliar desde los controles del video. No es obligatorio verlo completo para practicar.");
- videoPanel.append(videoHeader,video,videoNote);
+ const type=["cell","data","addition","subtraction","multiplication","division","sum"][i];
+ const figure=make("details","studio-vector-detail");const summary=make("summary","","Explorar figura vectorial · paso a paso");const vector=make("div","studio-vector-host");figure.append(summary,vector);
+ figure.addEventListener("toggle",()=>{if(figure.open&&!vector.dataset.ready&&window.AnimatedExcelFigures){window.AnimatedExcelFigures.render(type,vector);vector.dataset.ready="true"}});
+ videoPanel.append(videoHeader,figure,video,videoNote);
  article.append(videoPanel);
  if(parts[2])article.append(parts[2]);
  if(parts[3]){
