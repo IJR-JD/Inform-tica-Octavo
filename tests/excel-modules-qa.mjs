@@ -1,6 +1,6 @@
 /* IJR · Senior QA for all four Excel modules: 15 new real-cell exercises.
  * Module 01 validated in the existing excel-ux-qa.mjs and excel-edge-qa.mjs.
- * This file checks prerequisite locks, modules 02–04, formulas and charts.
+ * This file checks independent module access, sequential exercise verification, formulas and charts.
  */
 import assert from "node:assert/strict";
 import {chromium} from "playwright";
@@ -51,9 +51,16 @@ page.on("pageerror",e=>errors.push(String(e)));
 try{
  await page.goto(ORIGIN+"/");
  await page.evaluate(()=>localStorage.clear());
- await page.goto(root(2),{waitUntil:"domcontentloaded"});
- ok(await page.locator("#lockedModule").isVisible(),"Module 2 refuses access until Module 1 completed");
- ok(await page.locator("#moduleContent").isHidden(),"Module 2 locked exercises are hidden");
+ // A fresh browser can independently access each module without falsifying completion.
+ for(const n of [2,3,4]){
+  await launch(page,n);
+  ok(await page.locator("#lockedModule").isHidden(),"Module "+n+" has no prerequisite wall");
+  ok(await page.locator("#moduleContent").isVisible(),"Module "+n+" content is accessible");
+  ok(await page.locator("#module-step-1 .module-sheet").isVisible(),"Module "+n+" first practice is editable");
+ }
+ ok(await page.evaluate(()=>localStorage.getItem("ijr-ti8-excel-practice-v3"))===null,"Opening later modules does not fabricate Module 1 progress");
+ await page.goto(ORIGIN+"/");
+ for(let i=0;i<4;i++)ok((await page.locator(".hub-topic-card").nth(i).locator(".hub-topic-status").innerText()).includes("AVAILABLE"),"Hub module "+(i+1)+" is available");
  await page.evaluate(()=>localStorage.setItem("ijr-ti8-excel-practice-v3",JSON.stringify(Array(7).fill(true))));
  await launch(page,2);
  await verify(page,1,false);

@@ -16,3 +16,6 @@ Informática-Octavo
 
 ### Shared Excel Core
 All four calculation surfaces use `excel-core.js`. Scalar educational subset, not the Microsoft Excel engine. Spanish mode uses semicolon arguments and decimal comma (also decimal dot for existing exercises); English mode uses comma arguments and decimal dot. The extended lab provides ten optional challenges without changing existing module progress keys. Exclusions: full workbooks, arrays, dates, named ranges, exact Excel paste/format behavior, arbitrary Excel functions. Circular and syntax errors retain simulator-specific labels. Regression tests: `tests/excel-core-qa.mjs`.
+
+### Independent module access
+Modules 02–04 are available even when the preceding module is incomplete or has no local progress. The previous module is suggested for review only. Sequential verification within each module and existing progress keys remain unchanged.

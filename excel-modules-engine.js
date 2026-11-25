@@ -30,7 +30,8 @@ function predecessorComplete(){
  const v=loadJson("ijr-ti8-module-"+(moduleNo-1)+"-progress-v1",[]);
  return Array.isArray(v)&&v.length===window.IJRExcelModuleContent[moduleNo-1].items.length&&v.every(x=>x===true);
 }
-const locked=!predecessorComplete();
+// Prior module completion is a recommendation, not a condition of access.
+const predecessorPending=!predecessorComplete();
 function frontier(){const idx=progress.indexOf(false);return idx===-1?count:idx}
 function sync(){
  const f=frontier(),correct=progress.filter(Boolean).length;
@@ -214,16 +215,10 @@ function sheet(item,i){
  return shell;
 }
 function render(){
- if(locked){
-  $("lockedModule").hidden=false;$("moduleContent").hidden=true;
-  $("lockedModule").querySelector("p").textContent=
-   "Antes de comenzar este módulo debes completar y verificar los ejercicios del módulo "+(moduleNo-1)+". Tu avance se conserva en el navegador.";
-  $("prerequisiteLink").href=moduleNo===2?"../unidad-01-excel/":"../unidad-0"+(moduleNo-1)+"-excel/";
-  return;
- }
  $("lockedModule").hidden=true;$("moduleContent").hidden=false;
  $("moduleTitle").textContent=config.title;
  $("moduleIntro").textContent=config.intro;
+ if(predecessorPending){const note=node("p","module-description","Puedes comenzar este módulo directamente. Si necesitas repasar, consulta el módulo anterior; no es obligatorio terminarlo.");const link=node("a",""," Repasar módulo "+(moduleNo-1)+" →");link.href="../unidad-0"+(moduleNo-1)+"-excel/";note.append(link);$("moduleIntro").after(note)}
  const nav=$("moduleNav"),container=$("moduleLessons");
  nav.replaceChildren();container.replaceChildren();
  config.items.forEach((item,i)=>{
@@ -266,7 +261,7 @@ function render(){
  $("moduleNo").textContent="THEORY "+String(moduleNo).padStart(2,"0")+" · EXCEL LEARNING PATH";
  $("moduleIndexTitle").textContent="Conceptos del módulo "+moduleNo;
  $("finishModule").href=moduleNo===4?"../":"../unidad-0"+(moduleNo+1)+"-excel/";
- $("finishModule").textContent=moduleNo===4?"✓ Primeros cuatro módulos completados · Volver al Learning Hub":"Continuar al módulo "+(moduleNo+1)+" →";
+ $("finishModule").textContent=moduleNo===4?"✓ Módulo 04 completado · Volver al Learning Hub":"Continuar al módulo "+(moduleNo+1)+" →";
  sync();
 }
 render();
