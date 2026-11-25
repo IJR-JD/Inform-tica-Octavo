@@ -1,0 +1,33 @@
+/* TI8 Studio — common visual layer; existing educational engines remain untouched. */
+:root{--studio-bg:#f6f7f8;--studio-surface:#fff;--studio-border:#d9dce1;--studio-ink:#17202b;--studio-muted:#535c68;--studio-accent:#245f45;--studio-focus:#245f45;--studio-radius:10px;--studio-shadow:0 2px 8px rgba(22,32,43,.045)}
+body{background:var(--studio-bg)!important;color:var(--studio-ink)}
+.topbar{background:#fff;gap:16px;min-height:70px;box-shadow:0 1px 0 rgba(22,32,43,.03);border-color:var(--studio-border)}
+.brand-mark{border-radius:8px;background:#17202b}.brand strong{letter-spacing:-.025em}.brand small{color:var(--studio-muted)}
+.topbar .button,.hub-shell .button,.guided-shell .button,.exam-primary,.exam-secondary{border-radius:8px;min-height:44px}
+.button:hover{transform:none}.button-dark,.exam-primary{background:var(--studio-ink);border-color:var(--studio-ink)}
+.studio-nav{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding:10px clamp(12px,3vw,36px);border-bottom:1px solid var(--studio-border);background:var(--studio-surface)}
+.studio-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 13px;border-radius:7px;text-decoration:none;font-size:.84rem;font-weight:680;color:var(--studio-muted);line-height:1.3}
+.studio-nav a:hover{background:#eef1f3;color:var(--studio-ink)}
+.studio-nav a[aria-current=page]{background:var(--studio-ink);color:#fff}
+.studio-nav-label{font-size:.71rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:var(--studio-muted);padding:0 9px}
+.studio-nav a:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--studio-focus);outline-offset:3px}
+body:has(#examRunner:not([hidden])) .studio-nav{display:none}
+.hub-shell,.guided-shell,.exam-shell{max-width:1500px}
+.hub-overview,.theory-hero,.workshop-hero,.course-hero,.module-header,.exam-title-bar,.exam-intro{border:1px solid var(--studio-border);border-radius:var(--studio-radius);background:var(--studio-surface);box-shadow:var(--studio-shadow)}
+.hub-overview::after{display:none}
+.hub-overview h1,.theory-hero h1,.workshop-hero h1,.module-header h1,.course-hero h1,.exam-title-bar h1{color:var(--studio-ink);letter-spacing:-.045em;line-height:1.08}
+.hub-topic-card,.guided-card,.concept-card,.learning-goals-panel,.hub-figure,.lab-zone,.journey-stage,.journey-sidebar,.module-side,.exam-question-card,.exam-sidebar,.resource-card{border:1px solid var(--studio-border);border-radius:var(--studio-radius);background:var(--studio-surface);box-shadow:var(--studio-shadow)}
+.hub-topic-card:not(.locked):hover,.resource-card:hover,.lesson-explain .concept-card:hover{transform:none;border-color:#8b939d;box-shadow:0 4px 14px rgba(22,32,43,.08)}
+.hub-topic-preview{background:#eef1f3}.hub-topic-preview img,.hub-topic-preview video{object-fit:contain}.hub-topic-card:hover .hub-topic-preview img,.hub-topic-preview video{transform:none}
+.topic-fullhd-video,.module-lesson .study-video video{object-fit:contain;border-radius:8px}
+.hub-topic-status{font-weight:750;letter-spacing:.06em}
+#diagnosticModule{border:1px solid var(--studio-border)!important;background:var(--studio-surface)!important;border-radius:var(--studio-radius)}
+.exam-intro aside,.exam-figure,.figure-stage{border-color:var(--studio-border);border-radius:8px;background:#f6f7f8}
+.exam-timer-shell{border-color:var(--studio-border);border-radius:8px;box-shadow:var(--studio-shadow)}
+.journey-nav-item.is-current{background:var(--studio-ink)}.module-side{top:90px}
+.sheet-ribbon,.sheet-tabs,.inspector{background:#f6f7f8}.sheet-ribbon button,.sheet-ribbon label,.sheet-ribbon select{min-height:36px;border-radius:6px}.sheet-grid td,.sheet-grid th{font-size:13px}.workspace{height:calc(100dvh - 134px);min-height:660px}
+.studio-route-note{font-size:.84rem;line-height:1.55;color:var(--studio-muted);margin:10px 0 0}
+.studio-section-label{font-weight:750;color:var(--studio-muted);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}
+@media(min-width:1100px){.hub-topic-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.hub-topic-card h2{font-size:clamp(1.2rem,1.6vw,1.55rem)}}
+@media(max-width:840px){.studio-nav{justify-content:flex-start;gap:4px;padding:8px 12px}.studio-nav-label{flex-basis:100%;padding:2px 6px}.studio-nav a{padding:8px 10px;font-size:.8rem}.workspace{height:auto;min-height:700px}.topbar{flex-wrap:wrap}.top-actions{flex-wrap:wrap;gap:8px}.brand small{white-space:normal}.hub-overview,.theory-hero,.workshop-hero{gap:18px}.module-side{position:static}}
+@media(prefers-reduced-motion:reduce){.studio-nav a,.hub-topic-card,.resource-card,.button{transition:none!important;animation:none!important}html{scroll-behavior:auto}}

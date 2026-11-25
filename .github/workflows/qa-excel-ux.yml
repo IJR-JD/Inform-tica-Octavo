@@ -1,5 +1,7 @@
 name: QA · Excel editable UX (Chromium)
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -16,6 +18,9 @@ on:
       - 'tests/excel-modules-qa.mjs'
       - 'tests/diagnostic-qa.mjs'
       - 'index.html'
+      - 'studio-shell.css'
+      - 'excel-sandbox/**'
+      - 'tests/studio-shell-qa.mjs'
       - '.github/workflows/qa-excel-ux.yml'
   workflow_dispatch:
 permissions:
@@ -53,3 +58,4 @@ jobs:
           node tests/excel-edge-qa.mjs
           node tests/excel-modules-qa.mjs
           node tests/diagnostic-qa.mjs
+          node tests/studio-shell-qa.mjs
