@@ -54,56 +54,7 @@ function sync(){
  });
  const finish=$("finishModule");finish.hidden=f!==count;
 }
-function evaluate(cells,ref,parents=new Set()){
- const raw=String(cells[ref]??"").trim();
- if(!raw)return "";
- if(!raw.startsWith("=")){
-  if(/^[+-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)$/.test(raw)){return Number(raw.replace(",","."))}
-  return raw;
- }
- if(parents.has(ref))return "#CIRCULAR!";
- const seen=new Set(parents);seen.add(ref);
- const expression=raw.substring(1).replace(/\s+/g,"").toUpperCase();
- const functionMatch=/^(SUMA|SUM)\(([A-E][1-6]):([A-E][1-6])\)$/.exec(expression);
- if(functionMatch){
-  const cols="ABCDE";
-  const a=functionMatch[2],b=functionMatch[3];
-  const x0=Math.min(cols.indexOf(a[0]),cols.indexOf(b[0])),x1=Math.max(cols.indexOf(a[0]),cols.indexOf(b[0]));
-  const y0=Math.min(Number(a[1]),Number(b[1])),y1=Math.max(Number(a[1]),Number(b[1]));
-  let total=0;
-  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++){
-   const v=evaluate(cells,cols[x]+y,seen);
-   if(typeof v==="string"&&v.startsWith("#"))return v;
-   if(v===""||typeof v==="string"&&v.trim()!=="")continue;
-   if(typeof v==="number"&&Number.isFinite(v))total+=v;
-  }
-  return total;
- }
- // Only a documented arithmetic grammar: + - * / ( ) refs and numbers.
- // No eval, Function, property access or executable input.
- const toks=expression.match(/\$?[A-E]\$?[1-6]|\d+(?:\.\d+)?|[()+\-*/]/g)||[];
- if(!toks.length||toks.join("")!==expression)return "#¿NOMBRE?";
- let p=0;
- function atom(){
-  const t=toks[p++];
-  if(t==="-")return -atom();
-  if(t==="+")return atom();
-  if(t==="("){const x=add();if(toks[p++]!==")")throw "#FÓRMULA!";return x}
-  if(/^\d+(?:\.\d+)?$/.test(t||""))return Number(t);
-  if(/^\$?[A-E]\$?[1-6]$/.test(t||"")){
-   const v=evaluate(cells,t.replace(/\$/g,""),seen);
-   if(typeof v==="string"&&v.startsWith("#"))throw v;
-   if(v==="")return 0;
-   if(typeof v!=="number")throw "#¡VALOR!";
-   return v;
-  }
-  throw "#FÓRMULA!";
- }
- function mul(){let x=atom();while(["*","/"].includes(toks[p])){const op=toks[p++],b=atom();if(op==="/"&&b===0)throw "#DIV/0!";x=op==="*"?x*b:x/b}return x}
- function add(){let x=mul();while(["+","-"].includes(toks[p])){const op=toks[p++],b=mul();x=op==="+"?x+b:x-b}return x}
- try{const n=add();if(p!==toks.length)return "#FÓRMULA!";return Number.isFinite(n)?n:"#¡NUM!"}
- catch(e){return typeof e==="string"&&e.startsWith("#")?e:"#FÓRMULA!"}
-}
+function evaluate(cells,ref){const r=TI8Excel.evaluate(cells,ref,{cols:5,rows:6});return typeof r.value==="boolean"?(r.value?"VERDADERO":"FALSO"):r.value}
 function sheet(item,i){
  const shell=node("div","module-sheet");
  const head=node("div","live-sheet-head");

@@ -29,6 +29,7 @@ body{background:#fff}.guided-shell{max-width:1300px;margin:0 auto;padding:34px 2
 <section class="completion" id="completedPanel" hidden><strong>Unidad completada ✓</strong><p>Ya reconoces celdas y referencias, construyes fórmulas de suma, resta, multiplicación y división y compruebas resultados. Continúa con las siguientes unidades del Learning Hub.</p><a class="button button-dark" href="../">Return to Learning Hub</a> <a class="button button-light" href="../excel-sandbox/?exercise=restaurant">Practice a restaurant project →</a></section><footer class="footer">Instituto Jorge Robledo · Informática 8 · 2026 · Teoría guiada, ejercicios secuenciales y validación local. Sin registro de notas institucionales.</footer></main>
 <script src="../motion-figures.js?v=20261125-vector-v2"></script>
 <script src="../pedagogia-modulos.js?v=ti8-m12-20261119"></script>
+<script src="../excel-core.js?v=20261125-core1"></script>
 <script>
 "use strict";
 const EX=[
@@ -93,9 +94,7 @@ function drawFigure(type){
   if(video.autoplay)video.play().catch(()=>{});
 }
 
-function evalCell(k,stack=new Set()){const raw=cells[k]||"";if(!raw)return"";if(!raw.startsWith("="))return /^-?(?:\d+\.?\d*|\.\d+)$/.test(raw)?Number(raw):raw;if(stack.has(k))return"#CIRCULAR!";stack.add(k);let formula=raw.slice(1).toUpperCase().replace(/\s+/g,"");const sum=/^SUMA\(([A-E][1-6]):([A-E][1-6])\)$/.exec(formula);if(sum){const a=sum[1],b=sum[2],aC=COLUMNS.indexOf(a[0]),bC=COLUMNS.indexOf(b[0]),aR=Number(a[1]),bR=Number(b[1]);let total=0;for(let r=Math.min(aR,bR);r<=Math.max(aR,bR);r++)for(let c=Math.min(aC,bC);c<=Math.max(aC,bC);c++){const v=evalCell(COLUMNS[c]+r,new Set(stack));if(typeof v==="string"&&v.startsWith("#"))return v;total+=Number(v)||0}return total}
-const bin=/^([A-E][1-6])([+\-*/])([A-E][1-6])$/.exec(formula);if(bin){const a=evalCell(bin[1],new Set(stack)),b=evalCell(bin[3],new Set(stack));if(typeof a==="string"&&a.startsWith("#"))return a;if(typeof b==="string"&&b.startsWith("#"))return b;const n=Number(a),m=Number(b);if(!Number.isFinite(n)||!Number.isFinite(m))return"#VALOR!";if(bin[2]==="+")return n+m;if(bin[2]==="-")return n-m;if(bin[2]==="*")return n*m;if(m===0)return"#DIV/0!";return n/m}
-return"#FÓRMULA!"}
+function evalCell(k){const r=TI8Excel.evaluate(cells,k,{cols:5,rows:6});return typeof r.value==="boolean"?(r.value?"VERDADERO":"FALSO"):r.value}
 function isEditable(k){return EX[current].editable.includes(k)}
 function setCell(k,value){if(!isEditable(k))return;cells[k]=String(value).trim();renderGrid()}
 function choose(k){selected=k;renderGrid()}
@@ -110,5 +109,5 @@ document.getElementById("closeFigureDialog").addEventListener("click",()=>docume
 openStep(current);
 window.startPractice=()=>openStep(current);
 </script>
-<script src="theory-journey.js?v=20261125-vector-v2"></script>
+<script src="theory-journey.js?v=20261125-core1"></script>
 </body></html>
