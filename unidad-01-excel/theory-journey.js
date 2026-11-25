@@ -376,7 +376,10 @@ function assembleLesson(i){
  video.src="../assets/videos/"+MEDIA[i]+".mp4";
  video.setAttribute("aria-label","Video de "+NAMES[i]);
  const videoNote=make("p","study-video-note","Puedes reproducir, pausar o ampliar desde los controles del video. No es obligatorio verlo completo para practicar.");
- videoPanel.append(videoHeader,video,videoNote);
+ const type=["cell","data","addition","subtraction","multiplication","division","sum"][i];
+ const figure=make("details","studio-vector-detail");const summary=make("summary","","Explorar figura vectorial · paso a paso");const vector=make("div","studio-vector-host");figure.append(summary,vector);
+ figure.addEventListener("toggle",()=>{if(figure.open&&!vector.dataset.ready&&window.AnimatedExcelFigures){window.AnimatedExcelFigures.render(type,vector);vector.dataset.ready="true"}});
+ videoPanel.append(videoHeader,figure,video,videoNote);
  article.append(videoPanel);
  if(parts[2])article.append(parts[2]);
  if(parts[3]){

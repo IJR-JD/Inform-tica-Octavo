@@ -19,6 +19,9 @@ on:
       - 'tests/diagnostic-qa.mjs'
       - 'index.html'
       - 'studio-shell.css'
+      - 'motion-figures.*'
+      - 'studio-exercise-figure.js'
+      - 'tests/studio-media-qa.mjs'
       - 'excel-sandbox/**'
       - 'tests/studio-shell-qa.mjs'
       - '.github/workflows/qa-excel-ux.yml'
@@ -59,3 +62,4 @@ jobs:
           node tests/excel-modules-qa.mjs
           node tests/diagnostic-qa.mjs
           node tests/studio-shell-qa.mjs
+          node tests/studio-media-qa.mjs

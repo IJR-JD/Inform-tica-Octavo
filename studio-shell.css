@@ -31,3 +31,17 @@ body:has(#examRunner:not([hidden])) .studio-nav{display:none}
 @media(min-width:1100px){.hub-topic-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.hub-topic-card h2{font-size:clamp(1.2rem,1.6vw,1.55rem)}}
 @media(max-width:840px){.studio-nav{justify-content:flex-start;gap:4px;padding:8px 12px}.studio-nav-label{flex-basis:100%;padding:2px 6px}.studio-nav a{padding:8px 10px;font-size:.8rem}.workspace{height:auto;min-height:700px}.topbar{flex-wrap:wrap}.top-actions{flex-wrap:wrap;gap:8px}.brand small{white-space:normal}.hub-overview,.theory-hero,.workshop-hero{gap:18px}.module-side{position:static}}
 @media(prefers-reduced-motion:reduce){.studio-nav a,.hub-topic-card,.resource-card,.button{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+
+/* Shared media workspace: vector previews, exact data figures, video kept as secondary media. */
+.studio-vector-preview{position:absolute;inset:0;display:grid;place-items:center;background:#fff}
+.hub-topic-preview .studio-vector-preview svg{max-height:100%;max-width:100%}
+.hub-topic-preview>span{bottom:8px;left:8px;font-size:.65rem;border-radius:5px;padding:5px 8px}
+.studio-vector-detail{border:1px solid var(--studio-border);border-radius:8px;background:white;margin:14px 0;overflow:hidden}
+.studio-vector-detail summary{padding:14px 16px;cursor:pointer;font-weight:750;color:var(--studio-ink)}
+.studio-vector-host{padding:12px}
+.studio-exercise-figure{margin:14px 0 18px;border:1px solid var(--studio-border);background:white;border-radius:8px;overflow:hidden}
+.studio-exercise-figure svg{display:block;width:100%;height:auto;font-family:Inter,Arial,sans-serif;text-rendering:geometricPrecision}
+.studio-figure-caption{font-size:.85rem;padding:12px 15px;color:var(--studio-muted);border-top:1px solid var(--studio-border)}
+.study-video video,.topic-fullhd-video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#17202b;border-radius:7px}
+.study-video,.topic-fullhd-panel{border:1px solid var(--studio-border);border-radius:8px;background:white;padding:clamp(12px,2vw,22px)}
+@media(max-width:600px){.studio-vector-host{padding:6px}.studio-figure-caption{font-size:.8rem}.hub-topic-preview>span{font-size:.65rem}}

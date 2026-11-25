@@ -151,3 +151,21 @@
 .motion-stage .bar-value{font-size:12px;font-weight:850;opacity:0;transition:opacity .4s .6s}.motion-stage .grow .bar-value{opacity:1}
 .motion-stage .bar-label{font-size:11px;fill:#555!important}
 @keyframes popScale{0%{opacity:0;scale:.4}100%{opacity:1;scale:1}}
+
+/* Vector studio: clean white canvas, consistent stroke, accessible frame controls. */
+.motion-stage{border-radius:8px;padding:8px;background:#fff;box-shadow:none}
+.motion-stage svg{min-height:0;display:block;width:100%;height:auto;overflow:hidden;text-rendering:geometricPrecision;shape-rendering:geometricPrecision}
+.motion-stage .line{stroke:#cbd2da}.motion-stage .line.strong{stroke:#9fa9b4}.motion-stage .sheet-header{fill:#edf0f3}.motion-stage .axis-label{fill:#46515c!important}
+.motion-stage .panel-title,.motion-stage .panel-hint{fill:#515c68!important}
+.motion-stage .cell-text{font-size:15.5px}.motion-stage .result-text{font-size:18px}.motion-stage .cell-label{fill:#374151!important}
+.motion-stage.motion-snapshot{border:0;padding:0;background:#fff;box-shadow:none;width:100%;height:100%}
+.motion-snapshot svg{height:100%;width:100%;min-height:0}
+.motion-snapshot *{animation:none!important;transition:none!important}
+.motion-snapshot .flow.visible{stroke-dashoffset:0!important}
+.motion-timeline{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.motion-timeline button{min-height:40px;min-width:42px;flex:1;border:1px solid #cbd2da;border-radius:5px;background:#fff;color:#374151;font:700 13px ui-monospace,Consolas,monospace;cursor:pointer}
+.motion-timeline button.is-past{background:#e5f3eb;color:#245f45}.motion-timeline button.is-current{background:#17202b;color:#fff;border-color:#17202b}
+.motion-controls button,.motion-speed{min-height:44px;border-radius:6px;border:1px solid #cbd2da;background:#fff;color:#17202b;padding:8px 12px;font-weight:700}
+.motion-controls button.motion-primary,.motion-controls button.motion-expand{background:#17202b;color:#fff;border-color:#17202b}
+.motion-explanation{background:#f6f7f8;border:1px solid #d9dce1;border-left:3px solid #245f45;border-radius:6px;font-size:1.06rem}
+.motion-controls button[hidden]{display:none!important}

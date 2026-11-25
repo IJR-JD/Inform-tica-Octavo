@@ -294,7 +294,9 @@ function render(){
   video.controls=true;video.muted=true;video.defaultMuted=true;video.playsInline=true;video.loop=true;video.preload="metadata";
   video.src="../assets/videos/"+item.video+".mp4";
   video.setAttribute("aria-label","Video Full HD de "+item.title);
-  videoPanel.append(node("h3","","Observa la demostración · video opcional"),video);
+  videoPanel.append(node("h3","","Observa la demostración · video opcional"));
+  if(window.TI8ExerciseFigure)videoPanel.append(window.TI8ExerciseFigure(item));
+  videoPanel.append(video);
   lesson.append(videoPanel);
   const worked=node("section","ped-card module-worked");
   worked.append(node("p","ped-kicker","EJEMPLO CONTEXTUALIZADO"),node("h3","ped-h3","Situación cotidiana"),node("p","ped-copy",item.scenario));

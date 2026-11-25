@@ -10,3 +10,6 @@ Informática-Octavo
 - `studio-shell.css`: shared light workspace appearance and global navigation across all seven routes.
 - `tests/studio-shell-qa.mjs`: checks navigation, responsive widths and consistent diagnostic wording.
 - Existing lesson engines, media, grading rules and browser storage are unchanged. The visual reference is an interpretation of AniMotionPDF; the private source was unavailable for exact parity.
+
+### Vector media workspace
+12 resolution-independent lesson previews generated from the original SVG engine; a direct step timeline and playback speed; 7 Unit 01 interactive figures and 15 contextual seed-based SVG illustrations in units 02–04. Existing MP4 files are retained as optional media. No external AniMotionPDF assets are copied because the private repository is inaccessible from the current connection.
