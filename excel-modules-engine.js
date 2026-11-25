@@ -1,5 +1,5 @@
 /* Instituto Jorge Robledo · Informática 8 · módulos 02–04
- * Interactive sequential Excel practice, accessible cells and responsive chart.
+ * Independent Excel practice, accessible cells and responsive chart.
  * Local pedagogical progress only; never authoritative institutional grades.
  */
 (()=>{
@@ -205,17 +205,17 @@ function sheet(item,i){
  return shell;
 }
 function render(){
- $("lockedModule").hidden=true;$("moduleContent").hidden=false;
+ $("moduleContent").hidden=false;
  $("moduleTitle").textContent=config.title;
  $("moduleIntro").textContent=config.intro;
  if(predecessorPending){const note=node("p","module-description","Puedes comenzar este módulo directamente. Si necesitas repasar, consulta el módulo anterior; no es obligatorio terminarlo.");const link=node("a",""," Repasar módulo "+(moduleNo-1)+" →");link.href="../unidad-0"+(moduleNo-1)+"-excel/";note.append(link);$("moduleIntro").after(note)}
  const nav=$("moduleNav"),container=$("moduleLessons");
- nav.replaceChildren();container.replaceChildren();
+ const navFragment=document.createDocumentFragment(),lessonFragment=document.createDocumentFragment();
  config.items.forEach((item,i)=>{
   const a=node("a","journey-nav-item");
   a.dataset.moduleLink=String(i+1);
-  a.append(node("span","journey-num",String(i+1).padStart(2,"0")),node("span","journey-nav-text",item.title),node("span","journey-status module-state","🔒"));
-  nav.append(a);
+  a.append(node("span","journey-num",String(i+1).padStart(2,"0")),node("span","journey-nav-text",item.title),node("span","journey-status module-state","↗"));
+  navFragment.append(a);
   const lesson=node("article","study-lesson module-lesson");lesson.id="module-step-"+(i+1);
   const head=node("header","study-lesson-head");
   head.append(node("span","study-index","MÓDULO "+String(moduleNo).padStart(2,"0")+" · CONCEPTO "+String(i+1).padStart(2,"0")+" / "+String(count).padStart(2,"0")),node("h2","",item.title),node("p","",item.concept));
@@ -246,13 +246,16 @@ function render(){
    const row=node("div","study-continue"),next=node("a","study-next-link module-next","Siguiente: "+config.items[i+1].title+" →");
    next.href="#module-step-"+(i+2);next.hidden=true;row.append(next);lesson.append(row);
   }
-  container.append(lesson);
+  lessonFragment.append(lesson);
  });
+ nav.replaceChildren(navFragment);container.replaceChildren(lessonFragment);
  $("moduleNo").textContent="THEORY "+String(moduleNo).padStart(2,"0")+" · EXCEL LEARNING PATH";
  $("moduleIndexTitle").textContent="Conceptos del módulo "+moduleNo;
  $("finishModule").href=moduleNo===4?"../":"../unidad-0"+(moduleNo+1)+"-excel/";
  $("finishModule").textContent=moduleNo===4?"Volver al Learning Hub":"Continuar al módulo "+(moduleNo+1)+" →";
  sync();
+ $("moduleFallback").hidden=true;
+ document.documentElement.dataset.learningReady="true";
 }
-render();
+try{if(!window.TI8Excel)throw Error("Motor de cálculo no disponible");render()}catch(error){console.error("TI8 interactive module:",error);$("moduleLessons").replaceChildren();$("moduleNav").replaceChildren();$("moduleFallback").hidden=false;$("moduleFeedback").textContent="No se pudo iniciar la hoja interactiva. Puedes consultar todo el material y los ejercicios aquí."; }
 })();

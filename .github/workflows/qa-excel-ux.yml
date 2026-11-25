@@ -13,6 +13,7 @@ on:
       - 'excel-modules-*.js'
       - 'excel-core.js'
       - 'tests/excel-core-qa.mjs'
+      - 'tests/open-learning-smoke.mjs'
       - 'tests/excel-functions-browser-qa.mjs'
       - 'excel-modules.css'
       - 'pedagogia-modulos.js'
@@ -61,6 +62,7 @@ jobs:
       - name: Verify user behavior in headless Chromium
         run: |
           node tests/excel-core-qa.mjs
+          node tests/open-learning-smoke.mjs
           node tests/excel-functions-browser-qa.mjs
           node tests/excel-ux-qa.mjs
           node tests/excel-edge-qa.mjs

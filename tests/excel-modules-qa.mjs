@@ -54,7 +54,7 @@ try{
  // A fresh browser can independently access each module without falsifying completion.
  for(const n of [2,3,4]){
   await launch(page,n);
-  ok(await page.locator("#lockedModule").isHidden(),"Module "+n+" has no prerequisite wall");
+  ok(await page.locator("#lockedModule").count()===0,"Module "+n+" contains no prerequisite wall");
   ok(await page.locator("#moduleContent").isVisible(),"Module "+n+" content is accessible");
   ok(await page.locator("#module-step-1 .module-sheet").isVisible(),"Module "+n+" first practice is editable");
  }

@@ -325,9 +325,11 @@ function assembleLesson(i){
  }
  return article;
 }
-buildNav();host.replaceChildren();
-for(let i=0;i<7;i++)host.append(assembleLesson(i));
-showProgress();
+try{
+ if(!window.TI8Excel)throw Error("Motor de cálculo no disponible");
+ const lessons=document.createDocumentFragment();for(let i=0;i<7;i++)lessons.append(assembleLesson(i));
+ buildNav();host.replaceChildren(lessons);showProgress();$("unit1Fallback").hidden=true;document.documentElement.dataset.learningReady="true";
+}catch(error){console.error("TI8 interactive unit 1:",error);host.replaceChildren();nav.replaceChildren();$("unit1Fallback").hidden=false;return;}
 $("openPractice").hidden=false;
 $("openPractice").textContent="Abrir laboratorio final de 7 retos →";
 $("openPractice").onclick=()=>{

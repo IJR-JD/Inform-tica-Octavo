@@ -22,3 +22,6 @@ Modules 02–04 are available even when the preceding module is incomplete or ha
 
 ### Full open learning path
 Every lesson, video, figure, worksheet and optional final lab in modules 01–04 is accessible without prerequisites, including on a fresh browser. Individual checks record completion; editing or resetting one exercise revokes only that exercise, not others. The home page counts independent completions. No progress is fabricated by visiting content.
+
+### Open learning release verification
+Every module has static lesson content generated from its canonical exercise data, including theory, videos, seed tables and instructions. The interactive engine replaces it only after successful initialization. GitHub Pages stamps the actual commit in `release.json`, then runs fresh-browser checks against the public URL; a release is not considered fully verified until this job passes. `tests/open-learning-smoke.mjs` also checks the no-JavaScript fallback.
