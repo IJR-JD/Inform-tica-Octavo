@@ -41,6 +41,6 @@ function evaluate(cells,key,{cols=12,rows=24,locale="es"}={}){
  }}fail(E.syntax)}
  try{const v=ref(key);return {value:v===null?"":v,error:""}}catch(e){const code=Object.values(E).includes(e.message)?e.message:E.syntax;return {value:code,error:code}}
 }
-function translate(formula,dr,dc,{cols=12,rows=24}={}){if(!String(formula).startsWith("="))return formula;return formula.replace(/"(?:[^"]|"")*"|\$?[A-Za-z]{1,3}\$?[1-9]\d*(?![\w.])(?!(?:\s*)\()/g,t=>{if(t.startsWith('"'))return t;const a=addr(t),c=a.c+(a.ac?0:dc),r=a.r+(a.ar?0:dr);return c<1||r<1||c>cols||r>rows?E.ref:(a.ac?"$":"")+col(c)+(a.ar?"$":"")+r})}
+function translate(formula,dr,dc,{cols=12,rows=24}={}){if(!String(formula).startsWith("="))return formula;return formula.replace(/"(?:[^"]|"")*"|(?<![\w.$])\$?[A-Za-z]{1,3}\$?[1-9]\d*(?![\w.])(?!(?:\s*)\()/g,t=>{if(t.startsWith('"'))return t;const a=addr(t),c=a.c+(a.ac?0:dc),r=a.r+(a.ar?0:dr);return c<1||r<1||c>cols||r>rows?E.ref:(a.ac?"$":"")+col(c)+(a.ar?"$":"")+r})}
 root.TI8Excel={evaluate,translate,errors:E,aliases:alias};
 })(globalThis);

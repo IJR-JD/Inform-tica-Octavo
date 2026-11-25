@@ -8,4 +8,5 @@ for(const [formula,expected,locale="es"] of cases)assert.equal(evaluate({...data
 assert.equal(translate("=$B$1*A2",1,0),"=$B$1*A3");
 assert.equal(translate("=B$2+$C3",1,1),"=C$2+$C4");
 assert.equal(translate('=SI(A1>0;"A1";B2)',1,0),'=SI(A2>0;"A1";B3)');
-console.log("PASS "+(cases.length+3)+" Excel core cases");
+assert.equal(translate("=1E2+A1",1,0),"=1E2+A2");
+console.log("PASS "+(cases.length+4)+" Excel core cases");
